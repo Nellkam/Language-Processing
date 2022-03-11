@@ -1,4 +1,5 @@
 import re
+from datetime import date
 
 class MedicalRecord:
     def __init__(self,regexgroup:list):
@@ -13,6 +14,12 @@ class MedicalRecord:
             str += f"\t{k}: {v}\n"
         str +="}\n"
         return str
+    
+    # dunder for sorting
+    def __lt__(self,other) -> bool:
+        date1 = date(*list(map(int,re.findall(r'\d+',self.data["date"]))))
+        date2 = date(*list(map(int,re.findall(r'\d+',other.data["date"]))))
+        return date1<date2
 
     def markupify(self) -> str:
         str = f'<h2>{self.data["id"]} [{self.data["date"]}]</h2>\n<ul>\n'
@@ -29,7 +36,9 @@ class MedicalRecord:
 
 def writeHTML_records(records:dict,filename:str):
     with open(filename,"w") as fp:
-        for record in records.values():
+        sortDate = list(records.values())
+        sortDate.sort(reverse=True)
+        for record in sortDate:
             fp.write(record.markupify())
         print(f'$!> Records written to {filename}')
 
@@ -53,7 +62,7 @@ def printRecords(records:dict):
 records = {}
 
 readCSV(records,"../emd.csv")
-printRecords(records)
+#printRecords(records)
 writeHTML_records(records,"list.html")
 
 
