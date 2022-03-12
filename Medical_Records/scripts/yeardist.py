@@ -1,7 +1,15 @@
 import re
 from records import Records
 
+
 class YearDistribution:
+    titles = {
+        "sport": "Sports Distribution",
+        "gender": "Gender Distribution",
+        "fed": "Federate Status",
+        "result": "Medical Fitness Results"
+    }
+
     def __init__(self,records:Records,query:str):
         self.__years = {}
         if query!="gender" and query!="sport" and query!="fed" and query!="result":
@@ -38,6 +46,18 @@ class YearDistribution:
             if year is not None and year==y:
                 break
         return result
+    
+    def convertKey(self,key:str) -> str:
+        if key=="M":
+            return "Male"
+        elif key=="F":
+            return "Female"
+        elif key=="true":
+            return "Pass" if self.__query=="result" else "True"
+        elif key=="false":
+            return "Not Pass" if self.__query=="result" else "False"
+        else:
+            return key
 
     def writeHTML(self):
         for year in self.__years.keys():
@@ -45,9 +65,9 @@ class YearDistribution:
             freq = self.frequency(year)
             ids = self.ids(year)
             with open(filename,"w") as fp:
-                fp.writelines("<h1>"+year+"</h1>")
+                fp.writelines("<h1>"+YearDistribution.titles[self.__query]+" "+year+"</h1>")
                 for key in freq.keys():
-                    fp.writelines(f"<h2>{'='*10} {key} [{freq[key]}] {'='*10}</h2>\n<ul>\n")    
+                    fp.writelines(f"<h2>{'='*10} {self.convertKey(key)} [{freq[key]}] {'='*10}</h2>\n<ul>\n")    
                     for id in ids[key]:
                         fp.writelines("\t<li>"+id+"</li>\n")
                     fp.writelines("</ul>")
