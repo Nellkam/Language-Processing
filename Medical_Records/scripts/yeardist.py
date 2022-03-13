@@ -24,7 +24,7 @@ def generate(records:Records,query:str) -> tuple[str,dict]:
 def getFrequency(years:dict,year:str=None) -> dict[str,int]:
     result = {}
     for y,dist in years.items():
-        if year is None or year==y: 
+        if year is None or year==y or year=="all": 
             for k,ids in dist.items():
                 if k not in result:
                     result[k] = 0
@@ -36,7 +36,7 @@ def getFrequency(years:dict,year:str=None) -> dict[str,int]:
 def getIds(years:dict,year:str=None) -> dict[str,set[str]]:
     result = {}
     for y,dist in years.items():
-        if year is None or year==y: 
+        if year is None or year==y or year=="all": 
             for k,ids in dist.items():
                 if k not in result:
                     result[k] = set()
@@ -58,12 +58,14 @@ def convertKey(query:str,key:str) -> str:
         return key
 
 def writeHTML(query:str,years:dict):
-    for year in years.keys():
-        filename = "output/"+query+f"{year}.html"
+    keys=list(years.keys())
+    keys.append("all")
+    for year in keys: 
+        filename = "output/"+query+f"{year if year!='all' else 'total'}.html"
         freq = getFrequency(years,year)
         ids = getIds(years,year)
         with open(filename,"w") as fp:
-            fp.writelines("<h1>"+titles[query]+" "+year+"</h1>")
+            fp.writelines("<h1>"+titles[query]+f" {year if year!='all' else 'Total'} "+"</h1>")
             for key in freq.keys():
                 fp.writelines(f"<h2>{'='*10} {convertKey(query,key)} [{freq[key]}] {'='*10}</h2>\n<ul>\n")    
                 for id in ids[key]:
