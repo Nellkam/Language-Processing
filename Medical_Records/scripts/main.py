@@ -1,46 +1,10 @@
 import re
-from datetime import date
+from records import Records,MedicalRecord
+import yeardist
 
-class MedicalRecord:
-    def __init__(self, regexmatch:dict):
-        self.data = regexmatch
-
-    def __str__(self) -> str:
-        str = "{\n"
-        for k, v in self.data.items():
-            str += f"\t{k}: {v}\n"
-        str += "}\n"
-        return str
-    
-    # dunder for sorting
-    def __lt__(self, other) -> bool:
-        date1 = date(*list(map(int, re.findall(r'\d+', self.data["date"]))))
-        date2 = date(*list(map(int, re.findall(r'\d+', other.data["date"]))))
-        return date1 < date2
-
-    def markupify(self) -> str:
-        str = f'<h2>{self.data["id"]} [{self.data["date"]}]</h2>\n<ul>\n'
-        str += f'\t<li>[{self.data["index"]}] {self.data["lastname"]},{self.data["firstname"]}</li>\n'
-        str += f'\t<li>{"Male" if self.data["gender"]=="M" else "Female"}, {self.data["age"]} years old</li>\n'
-        str += f'\t<li>{self.data["email"]}</li>\n'
-        str += f'\t<li>Lives in {self.data["city"]}</li>\n'
-        str += f'\t<li>{self.data["sport"]} for {self.data["club"]}</li>\n'
-        if self.data["fed"] == "true":
-            str += f'\t<li>Federate</li>\n'
-        str += f'\t<li>{"Positive" if self.data["result"]=="true" else "Negative"}</li>\n'
-        str += "</ul>\n"
-        return str
-
-def writeHTML_records(records:dict, filename:str):
-    with open(filename, "w") as fp:
-        sortDate = list(records.values())
-        sortDate.sort(reverse = True)
-        for record in sortDate:
-            fp.write(record.markupify())
-        print(f'$!> Records written to {filename}')
-
-def readCSV(records:dict, filename:str):
+def readCSV(filename:str) -> Records:
     with open(filename, "r") as fp:
+        records = {}
         pattern = re.compile(r"""
             ^                            # start of string
             (?P<id>\w+),                 # _id
@@ -64,17 +28,33 @@ def readCSV(records:dict, filename:str):
                 entry = MedicalRecord(match.groupdict())
                 records[entry.data["id"]] = entry
         print("$!> CSV FILE HAS BEEN READ!")
+        return records
 
-def printRecords(records:dict):
+def writeHTML_records(records:Records,filename:str):
+    with open(filename,"w") as fp:
+        sortDate = list(records.values())
+        sortDate.sort(reverse=True)
+        for record in sortDate:
+            fp.write(record.markupify())
+        print(f'$!> Records written to {filename}')
+
+def printRecords(records:Records):
     for record in records.values():
         print(record)
     print(f'{records.__len__()} total records')
 
 
-records = {}
+records = readCSV("../emd.csv")
 
-readCSV(records, "../emd.csv")
 #printRecords(records)
 writeHTML_records(records, "list.html")
 
+queryB = yeardist.generate(records,"gender") 
+queryC = yeardist.generate(records,"sport") 
+queryF = yeardist.generate(records,"fed") 
+queryG = yeardist.generate(records,"result") 
 
+yeardist.writeHTML(*queryB)
+yeardist.writeHTML(*queryC)
+yeardist.writeHTML(*queryF)
+yeardist.writeHTML(*queryG)
