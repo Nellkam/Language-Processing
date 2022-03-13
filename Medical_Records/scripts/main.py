@@ -2,11 +2,8 @@ import re
 from datetime import date
 
 class MedicalRecord:
-    def __init__(self, regexgroup:list):
-        keys = "id index date firstname lastname age gender city sport club email fed result".split()
-        self.data = {}
-        for i, item in enumerate(list(regexgroup[0])):
-            self.data[keys[i]] = item
+    def __init__(self, regexmatch:dict):
+        self.data = regexmatch
 
     def __str__(self) -> str:
         str = "{\n"
@@ -62,11 +59,10 @@ def readCSV(records:dict, filename:str):
             $                            # end of string
         """, re.X)
         for line in fp.readlines():
-            match = pattern.findall(line)
-            if match is None or match == []:
-                continue
-            entry = MedicalRecord(match)
-            records[entry.data["id"]] = entry
+            match = pattern.match(line)
+            if match:
+                entry = MedicalRecord(match.groupdict())
+                records[entry.data["id"]] = entry
         print("$!> CSV FILE HAS BEEN READ!")
 
 def printRecords(records:dict):
