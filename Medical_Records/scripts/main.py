@@ -2,7 +2,7 @@ import re
 from records import Records,MedicalRecord
 import yeardist
 
-def readCSV(filename:str):
+def readCSV(filename:str) -> Records:
     with open(filename, "r") as fp:
         records = {}
         pattern = re.compile(r"""
