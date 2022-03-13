@@ -44,7 +44,23 @@ def writeHTML_records(records:dict, filename:str):
 
 def readCSV(records:dict, filename:str):
     with open(filename, "r") as fp:
-        pattern = re.compile(r"^(\w+),(\d+),(\d{4}-\d{2}-\d{2}),(\w+),(\w+),([1-9]\d?),(F|M),(\w+),(\w+),(\w+),([^,]+),(true|false),(true|false)$")
+        pattern = re.compile(r"""
+                                 ^                    # start of string
+                                 (\w+),               # _id
+                                 (\d+),               # index
+                                 (\d{4}-\d{2}-\d{2}), # dataEMD
+                                 (\w+),               # nome/primeiro
+                                 (\w+),               # nome/último
+                                 ([1-9]\d?),          # idade
+                                 (F|M),               # género
+                                 (\w+),               # morada
+                                 (\w+),               # modalidade
+                                 (\w+),               # clube
+                                 ([^,]+),             # email
+                                 (true|false),        # federado
+                                 (true|false)         # resultado
+                                 $                    # end of string
+                              """, re.X)
         for line in fp.readlines():
             match = pattern.findall(line)
             if match is None or match == []:
