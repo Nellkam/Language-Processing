@@ -45,21 +45,21 @@ def writeHTML_records(records:dict, filename:str):
 def readCSV(records:dict, filename:str):
     with open(filename, "r") as fp:
         pattern = re.compile(r"""
-                                 ^                    # start of string
-                                 (\w+),               # _id
-                                 (\d+),               # index
-                                 (\d{4}-\d{2}-\d{2}), # dataEMD
-                                 (\w+),               # nome/primeiro
-                                 (\w+),               # nome/último
-                                 ([1-9]\d?),          # idade
-                                 (F|M),               # género
-                                 (\w+),               # morada
-                                 (\w+),               # modalidade
-                                 (\w+),               # clube
-                                 ([^,]+),             # email
-                                 (true|false),        # federado
-                                 (true|false)         # resultado
-                                 $                    # end of string
+                                 ^                               # start of string
+                                 (?P<_id>\w+),                   # _id
+                                 (?P<index>\d+),                 # index
+                                 (?P<dataEMD>\d{4}-\d{2}-\d{2}), # dataEMD
+                                 (?P<nomeprimeiro>\w+),          # nome/primeiro
+                                 (?P<nomeultimo>\w+),            # nome/último
+                                 (?P<idade>[1-9]\d?),            # idade
+                                 (?P<género>F|M),                # género
+                                 (?P<morada>\w+),                # morada
+                                 (?P<modalidade>\w+),            # modalidade
+                                 (?P<clube>\w+),                 # clube
+                                 (?P<email>[^,]+),               # email
+                                 (?P<federado>true|false),       # federado
+                                 (?P<resultado>true|false)       # resultado
+                                 $                               # end of string
                               """, re.X)
         for line in fp.readlines():
             match = pattern.findall(line)
