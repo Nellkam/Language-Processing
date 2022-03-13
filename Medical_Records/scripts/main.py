@@ -1,18 +1,32 @@
 import re
 from records import Records,MedicalRecord
-from yeardist import YearDistribution
-import yeardist2
+import yeardist
 
-def readCSV(filename:str) -> Records:
-    with open(filename,"r") as fp:
+def readCSV(filename:str):
+    with open(filename, "r") as fp:
         records = {}
-        pattern = r"^(\w+),(\d+),(\d{4}-\d{2}-\d{2}),(\w+),(\w+),([1-9]\d?),(F|M),(\w+),(\w+),(\w+),([^,]+),(true|false),(true|false)$"
+        pattern = re.compile(r"""
+            ^                            # start of string
+            (?P<id>\w+),                 # _id
+            (?P<index>\d+),              # index
+            (?P<date>\d{4}-\d{2}-\d{2}), # dataEMD
+            (?P<firstname>\w+),          # nome/primeiro
+            (?P<lastname>\w+),           # nome/último
+            (?P<age>[1-9]\d?),           # idade
+            (?P<gender>[FM]),            # género
+            (?P<city>\w+),               # morada
+            (?P<sport>\w+),              # modalidade
+            (?P<club>\w+),               # clube
+            (?P<email>[^,]+),            # email
+            (?P<fed>true|false),         # federado
+            (?P<result>true|false)       # resultado
+            $                            # end of string
+        """, re.X)
         for line in fp.readlines():
-            match = re.findall(pattern,line)
-            if match is None or match==[]:
-                continue;
-            entry = MedicalRecord(match)
-            records[entry.data["id"]]=entry
+            match = pattern.match(line)
+            if match:
+                entry = MedicalRecord(match.groupdict())
+                records[entry.data["id"]] = entry
         print("$!> CSV FILE HAS BEEN READ!")
         return records
 
@@ -33,26 +47,14 @@ def printRecords(records:Records):
 records = readCSV("../emd.csv")
 
 #printRecords(records)
+writeHTML_records(records, "list.html")
 
-writeHTML_records(records,"list.html")
+queryB = yeardist.generate(records,"gender") 
+queryC = yeardist.generate(records,"sport") 
+queryF = yeardist.generate(records,"fed") 
+queryG = yeardist.generate(records,"result") 
 
-#queryB = YearDistribution(records,"gender")
-#queryC = YearDistribution(records,"sport")
-#queryF = YearDistribution(records,"fed")
-#queryG = YearDistribution(records,"result")
-#
-#queryB.writeHTML()
-#queryC.writeHTML()
-#queryF.writeHTML()
-#queryG.writeHTML()
-
-queryB = yeardist2.generate(records,"gender") 
-queryC = yeardist2.generate(records,"sport") 
-queryF = yeardist2.generate(records,"fed") 
-queryG = yeardist2.generate(records,"result") 
-
-yeardist2.writeHTML(*queryB)
-yeardist2.writeHTML(*queryC)
-yeardist2.writeHTML(*queryF)
-yeardist2.writeHTML(*queryG)
-
+yeardist.writeHTML(*queryB)
+yeardist.writeHTML(*queryC)
+yeardist.writeHTML(*queryF)
+yeardist.writeHTML(*queryG)

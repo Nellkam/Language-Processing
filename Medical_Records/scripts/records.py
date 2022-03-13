@@ -2,24 +2,21 @@ import re
 from datetime import date
 
 class MedicalRecord:
-    def __init__(self,regexgroup:list):
-        keys = "id index date firstname lastname age gender city sport club email fed result".split()
-        self.data = {}
-        for i,item in enumerate(list(regexgroup[0])):
-            self.data[keys[i]] = item
+    def __init__(self, regexmatch:dict):
+        self.data = regexmatch
 
     def __str__(self) -> str:
         str = "{\n"
-        for k,v in self.data.items():
+        for k, v in self.data.items():
             str += f"\t{k}: {v}\n"
-        str +="}\n"
+        str += "}\n"
         return str
     
     # dunder for sorting
-    def __lt__(self,other) -> bool:
-        date1 = date(*list(map(int,re.findall(r'\d+',self.data["date"]))))
-        date2 = date(*list(map(int,re.findall(r'\d+',other.data["date"]))))
-        return date1<date2
+    def __lt__(self, other) -> bool:
+        date1 = date(*list(map(int, re.findall(r'\d+', self.data["date"]))))
+        date2 = date(*list(map(int, re.findall(r'\d+', other.data["date"]))))
+        return date1 < date2
 
     def markupify(self) -> str:
         str = f'<h2>{self.data["id"]} [{self.data["date"]}]</h2>\n<ul>\n'
