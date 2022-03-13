@@ -2,24 +2,24 @@ import re
 from datetime import date
 
 class MedicalRecord:
-    def __init__(self,regexgroup:list):
+    def __init__(self, regexgroup:list):
         keys = "id index date firstname lastname age gender city sport club email fed result".split()
         self.data = {}
-        for i,item in enumerate(list(regexgroup[0])):
+        for i, item in enumerate(list(regexgroup[0])):
             self.data[keys[i]] = item
 
     def __str__(self) -> str:
         str = "{\n"
-        for k,v in self.data.items():
+        for k, v in self.data.items():
             str += f"\t{k}: {v}\n"
-        str +="}\n"
+        str += "}\n"
         return str
     
     # dunder for sorting
-    def __lt__(self,other) -> bool:
-        date1 = date(*list(map(int,re.findall(r'\d+',self.data["date"]))))
-        date2 = date(*list(map(int,re.findall(r'\d+',other.data["date"]))))
-        return date1<date2
+    def __lt__(self, other) -> bool:
+        date1 = date(*list(map(int, re.findall(r'\d+', self.data["date"]))))
+        date2 = date(*list(map(int, re.findall(r'\d+', other.data["date"]))))
+        return date1 < date2
 
     def markupify(self) -> str:
         str = f'<h2>{self.data["id"]} [{self.data["date"]}]</h2>\n<ul>\n'
@@ -34,23 +34,23 @@ class MedicalRecord:
         str += "</ul>\n"
         return str
 
-def writeHTML_records(records:dict,filename:str):
-    with open(filename,"w") as fp:
+def writeHTML_records(records:dict, filename:str):
+    with open(filename, "w") as fp:
         sortDate = list(records.values())
-        sortDate.sort(reverse=True)
+        sortDate.sort(reverse = True)
         for record in sortDate:
             fp.write(record.markupify())
         print(f'$!> Records written to {filename}')
 
-def readCSV(records:dict,filename:str):
-    with open(filename,"r") as fp:
-        pattern = r"^(\w+),(\d+),(\d{4}-\d{2}-\d{2}),(\w+),(\w+),([1-9]\d?),(F|M),(\w+),(\w+),(\w+),([^,]+),(true|false),(true|false)$"
+def readCSV(records:dict, filename:str):
+    with open(filename, "r") as fp:
+        pattern = re.compile(r"^(\w+),(\d+),(\d{4}-\d{2}-\d{2}),(\w+),(\w+),([1-9]\d?),(F|M),(\w+),(\w+),(\w+),([^,]+),(true|false),(true|false)$")
         for line in fp.readlines():
-            match = re.findall(pattern,line)
-            if match is None or match==[]:
-                continue;
+            match = pattern.findall(line)
+            if match is None or match == []:
+                continue
             entry = MedicalRecord(match)
-            records[entry.data["id"]]=entry
+            records[entry.data["id"]] = entry
         print("$!> CSV FILE HAS BEEN READ!")
 
 def printRecords(records:dict):
@@ -61,8 +61,8 @@ def printRecords(records:dict):
 
 records = {}
 
-readCSV(records,"../emd.csv")
+readCSV(records, "../emd.csv")
 #printRecords(records)
-writeHTML_records(records,"list.html")
+writeHTML_records(records, "list.html")
 
 
