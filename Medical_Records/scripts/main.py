@@ -45,21 +45,21 @@ def writeHTML_records(records:dict, filename:str):
 def readCSV(records:dict, filename:str):
     with open(filename, "r") as fp:
         pattern = re.compile(r"""
-            ^                               # start of string
-            (?P<_id>\w+),                   # _id
-            (?P<index>\d+),                 # index
-            (?P<dataEMD>\d{4}-\d{2}-\d{2}), # dataEMD
-            (?P<nomeprimeiro>\w+),          # nome/primeiro
-            (?P<nomeultimo>\w+),            # nome/último
-            (?P<idade>[1-9]\d?),            # idade
-            (?P<género>[FM]),               # género
-            (?P<morada>\w+),                # morada
-            (?P<modalidade>\w+),            # modalidade
-            (?P<clube>\w+),                 # clube
-            (?P<email>[^,]+),               # email
-            (?P<federado>true|false),       # federado
-            (?P<resultado>true|false)       # resultado
-            $                               # end of string
+            ^                            # start of string
+            (?P<id>\w+),                 # _id
+            (?P<index>\d+),              # index
+            (?P<date>\d{4}-\d{2}-\d{2}), # dataEMD
+            (?P<firstname>\w+),          # nome/primeiro
+            (?P<lastname>\w+),           # nome/último
+            (?P<age>[1-9]\d?),           # idade
+            (?P<gender>[FM]),            # género
+            (?P<city>\w+),               # morada
+            (?P<sport>\w+),              # modalidade
+            (?P<club>\w+),               # clube
+            (?P<email>[^,]+),            # email
+            (?P<fed>true|false),         # federado
+            (?P<result>true|false)       # resultado
+            $                            # end of string
         """, re.X)
         for line in fp.readlines():
             match = pattern.findall(line)
