@@ -1,6 +1,7 @@
 import re
 from records import Records,MedicalRecord
 from yeardist import YearDistribution
+import yeardist2
 
 def readCSV(filename:str) -> Records:
     with open(filename,"r") as fp:
@@ -35,14 +36,23 @@ records = readCSV("../emd.csv")
 
 writeHTML_records(records,"list.html")
 
-queryB = YearDistribution(records,"gender")
-queryC = YearDistribution(records,"sport")
-queryF = YearDistribution(records,"fed")
-queryG = YearDistribution(records,"result")
+#queryB = YearDistribution(records,"gender")
+#queryC = YearDistribution(records,"sport")
+#queryF = YearDistribution(records,"fed")
+#queryG = YearDistribution(records,"result")
+#
+#queryB.writeHTML()
+#queryC.writeHTML()
+#queryF.writeHTML()
+#queryG.writeHTML()
 
-queryB.writeHTML()
-queryC.writeHTML()
-queryF.writeHTML()
-queryG.writeHTML()
+queryB = yeardist2.generate(records,"gender") 
+queryC = yeardist2.generate(records,"sport") 
+queryF = yeardist2.generate(records,"fed") 
+queryG = yeardist2.generate(records,"result") 
 
+yeardist2.writeHTML(*queryB)
+yeardist2.writeHTML(*queryC)
+yeardist2.writeHTML(*queryF)
+yeardist2.writeHTML(*queryG)
 
