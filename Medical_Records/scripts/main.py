@@ -3,7 +3,6 @@ import re
 import sys
 import yeardist
 from records import Records, markupify, writeHTML_records
-# from records import Records,MedicalRecord
 
 def main():
     records: Records = []
