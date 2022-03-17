@@ -1,5 +1,6 @@
 import re
 from datetime import date
+from typing import List, Dict
 
 class MedicalRecord:
     def __init__(self, regexmatch:dict):
@@ -11,18 +12,18 @@ class MedicalRecord:
             str += f"\t{k}: {v}\n"
         str += "}\n"
         return str
-    
-    def markupify(self) -> str:
-        str = f'<h2>{self.data["id"]} [{self.data["date"]}]</h2>\n<ul>\n'
-        str += f'\t<li>[{self.data["index"]}] {self.data["lastname"]},{self.data["firstname"]}</li>\n'
-        str += f'\t<li>{"Male" if self.data["gender"]=="M" else "Female"}, {self.data["age"]} years old</li>\n'
-        str += f'\t<li>{self.data["email"]}</li>\n'
-        str += f'\t<li>Lives in {self.data["city"]}</li>\n'
-        str += f'\t<li>{self.data["sport"]} for {self.data["club"]}</li>\n'
-        if self.data["fed"] == "true":
-            str += f'\t<li>Federate</li>\n'
-        str += f'\t<li>{"Positive" if self.data["result"]=="true" else "Negative"}</li>\n'
-        str += "</ul>\n"
-        return str
+
+def markupify(record: Dict[str, str]) -> str:
+    markup = f'<h2>{record["id"]} [{record["date"]}]</h2>\n<ul>\n'
+    markup += f'\t<li>[{record["index"]}] {record["lastname"]},{record["firstname"]}</li>\n'
+    markup += f'\t<li>{"Male" if record["gender"] == "M" else "Female"}, {record["age"]} years old</li>\n'
+    markup += f'\t<li>{record["email"]}</li>\n'
+    markup += f'\t<li>Lives in {record["city"]}</li>\n'
+    markup += f'\t<li>{record["sport"]} for {record["club"]}</li>\n'
+    if record["fed"] == "true":
+        markup += f'\t<li>Federate</li>\n'
+    markup += f'\t<li>{"Positive" if record["result"] == "true" else "Negative"}</li>\n'
+    markup += "</ul>\n"
+    return markup
 
 Records = dict[str,MedicalRecord]

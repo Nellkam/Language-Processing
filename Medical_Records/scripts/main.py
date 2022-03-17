@@ -3,6 +3,7 @@ import re
 import sys
 from typing import List, Dict
 from operator import itemgetter
+from records import markupify
 # from records import Records,MedicalRecord
 # import yeardist
 
@@ -32,15 +33,16 @@ with open(sys.argv[1], 'r') as f:
         if match := pattern.match(line):
             records.append(match.groupdict())
 
+# Test print - show if 300 records have been correctly parsed and validated
 pprint.pprint(records)
 print(f'{len(records)} total records')
 
 def writeHTML_records(records: Records, filename: str):
+    sortDate = sorted(records, key=itemgetter('date'), reverse='true')
     with open(filename, "w") as f:
-        sortDate = sorted(records, key=itemgetter('date'), reverse='true')
-        # for record in sortDate:
-        #     f.write(record.markupify())
-        # print(f'$!> Records written to {filename}')
+        for record in sortDate:
+            f.write(markupify(record))
+        print(f'$!> Records written to {filename}')
 
 # writeHTML_records(records, "list.html")
 
