@@ -1,3 +1,4 @@
+import pprint
 import re
 import sys
 from typing import List, Dict
@@ -30,6 +31,9 @@ with open(sys.argv[1], 'r') as f:
         if match := pattern.match(line):
             records.append(match.groupdict())
 
+pprint.pprint(records)
+print(f'{len(records)} total records')
+
 # def writeHTML_records(records: List[Dict[str, str]], filename: str):
 #     with open(filename, "w") as fp:
 #         sortDate = list(records.values())
@@ -37,13 +41,6 @@ with open(sys.argv[1], 'r') as f:
 #         for record in sortDate:
 #             fp.write(record.markupify())
 #         print(f'$!> Records written to {filename}')
-#
-# def printRecords(records: Records):
-#     for record in records.values():
-#         print(record)
-#     print(f'{len(records)} total records')
-#
-# records = readCSV("../emd.csv")
 #
 # #printRecords(records)
 # writeHTML_records(records, "list.html")
