@@ -38,13 +38,13 @@ pprint.pprint(records)
 print(f'{len(records)} total records')
 
 def writeHTML_records(records: Records, filename: str):
-    sortDate = sorted(records, key=itemgetter('date'), reverse='true')
+    sortDate = sorted(records, key=itemgetter('date'), reverse=True)
     with open(filename, "w") as f:
         for record in sortDate:
             f.write(markupify(record))
         print(f'$!> Records written to {filename}')
 
-# writeHTML_records(records, "list.html")
+writeHTML_records(records, "list.html")
 
 # queryB = yeardist.generate(records, "gender")
 # queryC = yeardist.generate(records, "sport")
