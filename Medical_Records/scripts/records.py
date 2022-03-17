@@ -12,12 +12,6 @@ class MedicalRecord:
         str += "}\n"
         return str
     
-    # dunder for sorting
-    def __lt__(self, other) -> bool:
-        date1 = date(*list(map(int, re.findall(r'\d+', self.data["date"]))))
-        date2 = date(*list(map(int, re.findall(r'\d+', other.data["date"]))))
-        return date1 < date2
-
     def markupify(self) -> str:
         str = f'<h2>{self.data["id"]} [{self.data["date"]}]</h2>\n<ul>\n'
         str += f'\t<li>[{self.data["index"]}] {self.data["lastname"]},{self.data["firstname"]}</li>\n'

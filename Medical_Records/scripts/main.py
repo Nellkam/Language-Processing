@@ -2,6 +2,7 @@ import pprint
 import re
 import sys
 from typing import List, Dict
+from operator import itemgetter
 # from records import Records,MedicalRecord
 # import yeardist
 
@@ -34,17 +35,15 @@ with open(sys.argv[1], 'r') as f:
 pprint.pprint(records)
 print(f'{len(records)} total records')
 
-# def writeHTML_records(records: List[Dict[str, str]], filename: str):
-#     with open(filename, "w") as fp:
-#         sortDate = list(records.values())
-#         sortDate.sort(reverse=True)
-#         for record in sortDate:
-#             fp.write(record.markupify())
-#         print(f'$!> Records written to {filename}')
-#
-# #printRecords(records)
+def writeHTML_records(records: Records, filename: str):
+    with open(filename, "w") as f:
+        sortDate = sorted(records, key=itemgetter('date'), reverse='true')
+        # for record in sortDate:
+        #     f.write(record.markupify())
+        # print(f'$!> Records written to {filename}')
+
 # writeHTML_records(records, "list.html")
-#
+
 # queryB = yeardist.generate(records, "gender")
 # queryC = yeardist.generate(records, "sport")
 # queryF = yeardist.generate(records, "fed")
