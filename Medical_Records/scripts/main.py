@@ -1,13 +1,10 @@
 import pprint
 import re
 import sys
-from typing import List, Dict
-from operator import itemgetter
-from records import markupify
+import yeardist
+from records import Records, markupify, writeHTML_records
 # from records import Records,MedicalRecord
-# import yeardist
 
-Records = List[Dict[str, str]]
 records: Records = []
 
 pattern = re.compile(r"""
@@ -33,25 +30,19 @@ with open(sys.argv[1], 'r') as f:
         if match := pattern.match(line):
             records.append(match.groupdict())
 
-# Test print - show if 300 records have been correctly parsed and validated
+# Test prints - show if 300 records have been correctly parsed and validated
+print("CSV FILE READ")
 pprint.pprint(records)
 print(f'{len(records)} total records')
 
-def writeHTML_records(records: Records, filename: str):
-    sortDate = sorted(records, key=itemgetter('date'), reverse=True)
-    with open(filename, "w") as f:
-        for record in sortDate:
-            f.write(markupify(record))
-        print(f'$!> Records written to {filename}')
-
 writeHTML_records(records, "list.html")
 
-# queryB = yeardist.generate(records, "gender")
-# queryC = yeardist.generate(records, "sport")
-# queryF = yeardist.generate(records, "fed")
-# queryG = yeardist.generate(records, "result")
-#
-# yeardist.writeHTML(*queryB)
-# yeardist.writeHTML(*queryC)
-# yeardist.writeHTML(*queryF)
-# yeardist.writeHTML(*queryG)
+queryB = yeardist.generate(records, "gender")
+queryC = yeardist.generate(records, "sport")
+queryF = yeardist.generate(records, "fed")
+queryG = yeardist.generate(records, "result")
+
+yeardist.writeHTML(*queryB)
+yeardist.writeHTML(*queryC)
+yeardist.writeHTML(*queryF)
+yeardist.writeHTML(*queryG)

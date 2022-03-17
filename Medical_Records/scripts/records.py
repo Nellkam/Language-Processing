@@ -1,19 +1,10 @@
-import re
-from datetime import date
 from typing import List, Dict
+from operator import itemgetter
 
-class MedicalRecord:
-    def __init__(self, regexmatch:dict):
-        self.data = regexmatch
+Record = Dict[str, str]
+Records = List[Record]
 
-    def __str__(self) -> str:
-        str = "{\n"
-        for k, v in self.data.items():
-            str += f"\t{k}: {v}\n"
-        str += "}\n"
-        return str
-
-def markupify(record: Dict[str, str]) -> str:
+def markupify(record: Record) -> str:
     markup = f'<h2>{record["id"]} [{record["date"]}]</h2>\n<ul>\n'
     markup += f'\t<li>[{record["index"]}] {record["lastname"]},{record["firstname"]}</li>\n'
     markup += f'\t<li>{"Male" if record["gender"] == "M" else "Female"}, {record["age"]} years old</li>\n'
@@ -26,4 +17,8 @@ def markupify(record: Dict[str, str]) -> str:
     markup += "</ul>\n"
     return markup
 
-Records = dict[str,MedicalRecord]
+def writeHTML_records(records: Records, filename: str):
+    records_by_date = sorted(records, key=itemgetter('date'), reverse=True)
+    with open(filename, "w") as f:
+        for record in records_by_date:
+            f.write(markupify(record))
