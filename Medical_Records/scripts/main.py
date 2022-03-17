@@ -3,7 +3,6 @@ import re
 import sys
 import yeardist
 from records import Records, markupify, writeHTML_records
-from age_gender import age_gender
 # from records import Records,MedicalRecord
 
 def main():
@@ -46,7 +45,6 @@ def main():
     # TODO: move to function
     queryB = yeardist.generate(records, "gender")
     queryC = yeardist.generate(records, "sport")
-    queryD = age_gender(records)
     queryF = yeardist.generate(records, "fed")
     queryG = yeardist.generate(records, "result")
 
