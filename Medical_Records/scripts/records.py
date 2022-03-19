@@ -14,15 +14,14 @@ def markupify(record: Record) -> str:
         \t<li>{record['email']}</li>
         \t<li>Lives in {record['city']}</li>
         \t<li>{record['sport']} for {record['club']}</li>
+        \t<li>Federated: {'Yes' if record['fed'] == 'true' else 'No'}</li>
+        \t<li>{'Positive' if record['result'] == 'true' else 'Negative'}</li>
+        </ul>
     """)
-    if record['fed'] == 'true':
-        markup += f"\t<li>Federate</li>\n"
-    markup += f"\t<li>{'Positive' if record['result'] == 'true' else 'Negative'}</li>\n"
-    markup += "</ul>\n"
     return markup
 
 def writeHTML_records(records: Records, filename: str):
     records_by_date = sorted(records, key=itemgetter('date'), reverse=True)
     with open(filename, "w") as f:
         for record in records_by_date:
-            f.write(markupify(record))
+            f.write(f"{markupify(record)}\n")
