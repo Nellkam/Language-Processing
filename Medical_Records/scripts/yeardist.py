@@ -1,9 +1,10 @@
 import os
 import re
 from records import Records
+from typing import Any, Dict, Set
 
 def generate(records: Records, query: str) -> tuple[str, dict]:
-    years = {}
+    years: Dict[Any, Any] = {}
     if query != "gender" and query != "sport" and query != "fed" and query != "result":
         return ("", {})
     for record in records:
@@ -16,7 +17,7 @@ def generate(records: Records, query: str) -> tuple[str, dict]:
     return (query, years)
 
 def getFrequency(years: dict, year: str = None) -> dict[str, int]:
-    result = {}
+    result: Dict[str, int] = {}
     for y, dist in years.items():
         if year is None or year == y or year == "all":
             for k, ids in dist.items():
@@ -28,7 +29,7 @@ def getFrequency(years: dict, year: str = None) -> dict[str, int]:
     return result
 
 def getIds(years: dict, year: str = None) -> dict[str, set[str]]:
-    result = {}
+    result: Dict[str, Set[str]] = {}
     for y, dist in years.items():
         if year is None or year == y or year == "all":
             for k, ids in dist.items():
