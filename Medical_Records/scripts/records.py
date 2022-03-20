@@ -6,7 +6,7 @@ Record = Dict[str, str]
 Records = List[Record]
 
 def markupify(record: Record) -> str:
-    markup = inspect.cleandoc(f"""
+    return inspect.cleandoc(f"""
         <h2>{record['id']} [{record['date']}]</h2>
         <ul>
         \t<li>[{record['index']}] {record['lastname']},{record['firstname']}</li>
@@ -18,7 +18,6 @@ def markupify(record: Record) -> str:
         \t<li>{'Positive' if record['result'] == 'true' else 'Negative'}</li>
         </ul>
     """)
-    return markup
 
 def writeHTML_records(records: Records, filename: str):
     records_by_date = sorted(records, key=itemgetter('date'), reverse=True)

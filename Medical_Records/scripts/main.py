@@ -28,6 +28,7 @@ def main():
     # read csv
     # TODO: move to function
     with open(sys.argv[1], 'r') as f:
+        next(f)
         for line in f:
             if match := pattern.match(line):
                 records.append(match.groupdict())
