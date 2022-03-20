@@ -4,7 +4,7 @@ import sys
 import yeardist
 from records import Records, markupify, writeHTML_records
 
-def main():
+def main() -> int:
     records: Records = []
 
     pattern = re.compile(r"""
@@ -55,5 +55,7 @@ def main():
     yeardist.writeHTML(*queryF)
     yeardist.writeHTML(*queryG)
 
+    return 0
+
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
