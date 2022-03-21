@@ -1,34 +1,26 @@
-import re
-from datetime import date
+from typing import List, Dict
+from operator import itemgetter
+import inspect
 
-class MedicalRecord:
-    def __init__(self, regexmatch:dict):
-        self.data = regexmatch
+Record = Dict[str, str]
+Records = List[Record]
 
-    def __str__(self) -> str:
-        str = "{\n"
-        for k, v in self.data.items():
-            str += f"\t{k}: {v}\n"
-        str += "}\n"
-        return str
-    
-    # dunder for sorting
-    def __lt__(self, other) -> bool:
-        date1 = date(*list(map(int, re.findall(r'\d+', self.data["date"]))))
-        date2 = date(*list(map(int, re.findall(r'\d+', other.data["date"]))))
-        return date1 < date2
+def markupify(record: Record) -> str:
+    return inspect.cleandoc(f"""
+        <h2>{record['id']} [{record['date']}]</h2>
+        <ul>
+        \t<li>[{record['index']}] {record['lastname']},{record['firstname']}</li>
+        \t<li>{'Male' if record['gender'] == 'M' else 'Female'}, {record['age']} years old</li>
+        \t<li>{record['email']}</li>
+        \t<li>Lives in {record['city']}</li>
+        \t<li>{record['sport']} for {record['club']}</li>
+        \t<li>Federated: {'Yes' if record['fed'] == 'true' else 'No'}</li>
+        \t<li>{'Positive' if record['result'] == 'true' else 'Negative'}</li>
+        </ul>
+    """)
 
-    def markupify(self) -> str:
-        str = f'<h2>{self.data["id"]} [{self.data["date"]}]</h2>\n<ul>\n'
-        str += f'\t<li>[{self.data["index"]}] {self.data["lastname"]},{self.data["firstname"]}</li>\n'
-        str += f'\t<li>{"Male" if self.data["gender"]=="M" else "Female"}, {self.data["age"]} years old</li>\n'
-        str += f'\t<li>{self.data["email"]}</li>\n'
-        str += f'\t<li>Lives in {self.data["city"]}</li>\n'
-        str += f'\t<li>{self.data["sport"]} for {self.data["club"]}</li>\n'
-        if self.data["fed"] == "true":
-            str += f'\t<li>Federate</li>\n'
-        str += f'\t<li>{"Positive" if self.data["result"]=="true" else "Negative"}</li>\n'
-        str += "</ul>\n"
-        return str
-
-Records = dict[str,MedicalRecord]
+def writeHTML_records(records: Records, filename: str):
+    records_by_date = sorted(records, key=itemgetter('date'), reverse=True)
+    with open(filename, "w") as f:
+        for record in records_by_date:
+            f.write(f"{markupify(record)}\n")
