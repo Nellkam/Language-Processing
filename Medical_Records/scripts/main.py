@@ -1,10 +1,11 @@
 import re
 from records import Records,MedicalRecord
 import yeardist
+import plotly.graph_objects as go
 
 def readCSV(filename:str) -> Records:
+    records = {}
     with open(filename, "r") as fp:
-        records = {}
         pattern = re.compile(r"""
             ^                            # start of string
             (?P<id>\w+),                 # _id
@@ -28,7 +29,7 @@ def readCSV(filename:str) -> Records:
                 entry = MedicalRecord(match.groupdict())
                 records[entry.data["id"]] = entry
         print("$!> CSV FILE HAS BEEN READ!")
-        return records
+    return records
 
 def writeHTML_records(records:Records,filename:str):
     with open(filename,"w") as fp:
@@ -43,18 +44,71 @@ def printRecords(records:Records):
         print(record)
     print(f'{records.__len__()} total records')
 
+# returns a list containing result for each year query
+def yearDistributions(records:Records) -> list[tuple[str,dict[str,dict]]]:
+    queries = "gender sport fed result".split()
+    result = []
+    for q in queries:
+        result.append(yeardist.generate(records,q))
+    return result
 
-records = readCSV("../emd.csv")
+def piechart(filename:str,title_:str,labels_:list[str],values_:list[int]):
+    colors = ['gold', 'mediumturquoise', 'darkorange', 'lightgreen']
+    hoverlabel = ("Frequency: "*len(labels_)).split()
+    fig = go.Figure(
+        data=[go.Pie(
+                labels=labels_,
+                values=values_,
+                showlegend=False,
+                text=hoverlabel,
+                hovertemplate="%{text} %{value}<extra></extra>"
+            )
+        ],
+        layout=go.Layout(
+            height=500,
+            width=500,
+            hoverlabel=dict(font_size=16)
+        )
+    )
+    fig.update_traces(
+        hoverinfo='text+value',
+        textinfo='label+percent',
+        textfont_size=20,
+        marker=dict(colors=colors, line=dict(color='#000000', width=2)),
+        title=title_,
+        title_font=dict(size=30),
+    )
+    fig.show()
+    fig.write_html(filename)
+    fig.write_image(filename.replace("html","jpeg"))
+    #help(go.Pie)
 
-#printRecords(records)
-writeHTML_records(records, "list.html")
+def yearGraphs(query:str,years:dict[str,dict[str,list[str]]]):
+    keys = list(years.keys())
+    keys.append("all")
+    for year in keys:
+        freqs = yeardist.getFrequency(years,year)
+        labels,values=[],[]
+        for l,v in freqs.items():
+            l=yeardist.convertKey(query,l)
+            labels.insert(0,l)
+            values.insert(0,v)
+        y="Total" if year=="all" else year
+        filename="output/resources/"+query+y+"_chart.html" 
+        title=yeardist.titles[query]+" "+y
+        if(query=="result"):
+            piechart(filename,title,labels,values)
 
-queryB = yeardist.generate(records,"gender") 
-queryC = yeardist.generate(records,"sport") 
-queryF = yeardist.generate(records,"fed") 
-queryG = yeardist.generate(records,"result") 
+def main():
+    records = readCSV("../emd.csv")
+    queryB,queryC,queryF,queryG = yearDistributions(records)
 
-yeardist.writeHTML(*queryB)
-yeardist.writeHTML(*queryC)
-yeardist.writeHTML(*queryF)
-yeardist.writeHTML(*queryG)
+    writeHTML_records(records, "output/list.html")
+    yeardist.writeHTML(*queryB)
+    yeardist.writeHTML(*queryC)
+    yeardist.writeHTML(*queryF)
+    yeardist.writeHTML(*queryG)
+    
+    yearGraphs(*queryG)
+
+main()
