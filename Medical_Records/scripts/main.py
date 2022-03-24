@@ -2,6 +2,7 @@ import pprint
 import re
 import sys
 import yeardist
+from unidecode import unidecode
 from records import Records, markupify, writeHTML_records
 
 def main() -> int:
@@ -35,27 +36,32 @@ def readCSV(csv_file: str) -> Records:
     records: Records = []
 
     pattern = re.compile(r"""
-        ^                            # start of string
-        (?P<id>\w+),                 # _id
-        (?P<index>\d+),              # index
-        (?P<date>\d{4}-\d{2}-\d{2}), # dataEMD
-        (?P<firstname>\w+),          # nome/primeiro
-        (?P<lastname>\w+),           # nome/último
-        (?P<age>[1-9]\d?),           # idade
-        (?P<gender>[FM]),            # género
-        (?P<city>\w+),               # morada
-        (?P<sport>\w+),              # modalidade
-        (?P<club>\w+),               # clube
-        (?P<email>[^,]+),            # email
-        (?P<fed>true|false),         # federado
-        (?P<result>true|false)       # resultado
-        $                            # end of string
+        ^                                   # start of string
+        (?P<id>       [\da-z]{24}),         # _id
+        (?P<index>    0|[1-9]\d*),          # index
+        (?P<date>     \d{4}-\d{2}-\d{2}),   # dataEMD
+        (?P<firstname>[A-Z][a-z]*),         # nome/primeiro
+        (?P<lastname> [A-Z][a-z]*),         # nome/último
+        (?P<age>      0|[1-9]\d{,2}),       # idade
+        (?P<gender>   [FM]),                # género
+        (?P<city>     [A-Z][a-z]*),         # morada
+        (?P<sport>    [A-Z][A-Za-z]*),      # modalidade
+        (?P<club>     [A-Z][A-Za-z]*),      # clube
+        (?P<email>                          # email
+            [a-z0-9!#$%&'*+/=?^_`{|}~-]+            # local-part before fst dot
+            (?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*     # local-part from fst dot
+            @                                       # @ (at sign)
+            (?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+  # domain name
+            [a-z0-9](?:[a-z0-9-]*[a-z0-9])?),       # top-level domain name
+        (?P<fed>      true|false),          # federado
+        (?P<result>   true|false)           # resultado
+        $                                   # end of string
     """, re.X)
 
     with open(csv_file, 'r') as f:
         next(f)
         for line in f:
-            if match := pattern.match(line):
+            if match := pattern.match(unidecode(line)):
                 records.append(match.groupdict())
 
     return records
