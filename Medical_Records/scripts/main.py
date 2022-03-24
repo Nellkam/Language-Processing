@@ -42,7 +42,7 @@ def readCSV(csv_file: str) -> Records:
         (?P<date>     \d{4}-\d{2}-\d{2}),   # dataEMD
         (?P<firstname>[A-Z][a-z]*),         # nome/primeiro
         (?P<lastname> [A-Z][a-z]*),         # nome/último
-        (?P<age>      0|[1-9]\d*),          # idade
+        (?P<age>      0|[1-9]\d{,2}),       # idade
         (?P<gender>   [FM]),                # género
         (?P<city>     [A-Z][a-z]*),         # morada
         (?P<sport>    [A-Z][A-Za-z]*),      # modalidade
