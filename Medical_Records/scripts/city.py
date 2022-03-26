@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup # type: ignore
 from inspect import cleandoc
 from itertools import groupby
 from operator import itemgetter
@@ -20,12 +21,28 @@ def cities(records: Records) -> Cities:
 
 def markupify_city(city: str, records: Records) -> str:
     records.sort(key=itemgetter('firstname', 'lastname'))
-    return cleandoc(f"""
+    return BeautifulSoup(f"""
         {city}: {len(records)}
         <ul>
         {"".join(f"<li><b>{r['firstname']}:</b> {r['sport']}</li>" for r in records)}
         </ul>
-    """) + '\n'
+    """, 'html.parser').prettify()
+
+    # return (
+    #     f"{city}: {len(records)}\n"
+    #     "<ul>\n"
+    #     "\t" + "\n\t".join(f"<li><b>{r['firstname']}:</b> {r['sport']}</li>" for r in records) + "\n"
+    #     "</u>\n"
+    # )
+
+    # sep = '\n\t'
+    # return cleandoc(f"""
+    #     {city}: {len(records)}
+    #     <ul>
+    #     \t{sep.join(f"<li><b>{r['firstname']}:</b> {r['sport']}</li>" for r in records)}
+    #     </ul>
+    # """)
+
     # result = ""
     # result += f"{city}: {len(records)}"
     # result += '<ul>'
@@ -47,12 +64,13 @@ def write_cities2(cities: Cities):
     with open(file, 'w') as f:
         for city, records in cities.items():
             records.sort(key=itemgetter('firstname', 'lastname'))
-            f.write(cleandoc(f"""
+            f.write(BeautifulSoup(f"""
                 {city}: {len(records)}
                 <ul>
                 {"".join(f"<li><b>{r['firstname']}:</b> {r['sport']}</li>" for r in records)}
                 </ul>
-            """))
+            """, 'html.parser').prettify())
+
             # f.write(f"{city}: {len(records)}\n")
             # f.write('<ul>\n')
             # for record in records:
