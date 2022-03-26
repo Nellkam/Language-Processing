@@ -4,6 +4,7 @@ import sys
 import yeardist
 from unidecode import unidecode
 from records import Records, markupify, writeHTML_records
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 def main() -> int:
     records: Records = readCSV(sys.argv[1])
@@ -14,7 +15,10 @@ def main() -> int:
     pprint.pprint(records)
     print(f'{len(records)} total records')
 
-    writeHTML_records(records, "list.html")
+    file_loader = FileSystemLoader('templates')
+    env = Environment(loader=file_loader, autoescape=select_autoescape())
+
+    writeHTML_records(env, records)
 
     # execute queries
     # TODO: move to function
