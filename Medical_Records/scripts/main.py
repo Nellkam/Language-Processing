@@ -1,114 +1,57 @@
+import pprint
 import re
-from records import Records,MedicalRecord
+import sys
 import yeardist
-import plotly.graph_objects as go
+from unidecode import unidecode
+from records import Records, writeHTML_records
 
-def readCSV(filename:str) -> Records:
-    records = {}
-    with open(filename, "r") as fp:
-        pattern = re.compile(r"""
-            ^                            # start of string
-            (?P<id>\w+),                 # _id
-            (?P<index>\d+),              # index
-            (?P<date>\d{4}-\d{2}-\d{2}), # dataEMD
-            (?P<firstname>\w+),          # nome/primeiro
-            (?P<lastname>\w+),           # nome/último
-            (?P<age>[1-9]\d?),           # idade
-            (?P<gender>[FM]),            # género
-            (?P<city>\w+),               # morada
-            (?P<sport>\w+),              # modalidade
-            (?P<club>\w+),               # clube
-            (?P<email>[^,]+),            # email
-            (?P<fed>true|false),         # federado
-            (?P<result>true|false)       # resultado
-            $                            # end of string
-        """, re.X)
-        for line in fp.readlines():
-            match = pattern.match(line)
-            if match:
-                entry = MedicalRecord(match.groupdict())
-                records[entry.data["id"]] = entry
-        print("$!> CSV FILE HAS BEEN READ!")
+def main() -> int:
+    records: Records = readCSV(sys.argv[1])
+
+    # Test prints - show if 300 records have been correctly parsed and validated
+    # !!! Remove before submitting
+    print("CSV FILE READ")
+    #pprint.pprint(records)
+    print(f'{len(records)} total records')
+
+    writeHTML_records(records, "./output/list.html")
+    yeardist.run(records)
+
+    return 0
+
+def readCSV(csv_file: str) -> Records:
+    records: Records = []
+
+    pattern = re.compile(r"""
+        ^                                   # start of string
+        (?P<id>       [\da-z]{24}),         # _id
+        (?P<index>    0|[1-9]\d*),          # index
+        (?P<date>     \d{4}-\d{2}-\d{2}),   # dataEMD
+        (?P<firstname>[A-Z][a-z]*),         # nome/primeiro
+        (?P<lastname> [A-Z][a-z]*),         # nome/último
+        (?P<age>      0|[1-9]\d{,2}),       # idade
+        (?P<gender>   [FM]),                # género
+        (?P<city>     [A-Z][a-z]*),         # morada
+        (?P<sport>    [A-Z][A-Za-z]*),      # modalidade
+        (?P<club>     [A-Z][A-Za-z]*),      # clube
+        (?P<email>                          # email
+            [a-z0-9!#$%&'*+/=?^_`{|}~-]+            # local-part before fst dot
+            (?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*     # local-part from fst dot
+            @                                       # @ (at sign)
+            (?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+  # domain name
+            [a-z0-9](?:[a-z0-9-]*[a-z0-9])?),       # top-level domain name
+        (?P<fed>      true|false),          # federado
+        (?P<result>   true|false)           # resultado
+        $                                   # end of string
+    """, re.X)
+
+    with open(csv_file, 'r') as f:
+        next(f)
+        for line in f:
+            if match := pattern.match(unidecode(line)):
+                records.append(match.groupdict())
+
     return records
 
-def writeHTML_records(records:Records,filename:str):
-    with open(filename,"w") as fp:
-        sortDate = list(records.values())
-        sortDate.sort(reverse=True)
-        for record in sortDate:
-            fp.write(record.markupify())
-        print(f'$!> Records written to {filename}')
-
-def printRecords(records:Records):
-    for record in records.values():
-        print(record)
-    print(f'{records.__len__()} total records')
-
-# returns a list containing result for each year query
-def yearDistributions(records:Records) -> list[tuple[str,dict[str,dict]]]:
-    queries = "gender sport fed result".split()
-    result = []
-    for q in queries:
-        result.append(yeardist.generate(records,q))
-    return result
-
-def piechart(filename:str,title_:str,labels_:list[str],values_:list[int]):
-    colors = ['gold', 'mediumturquoise', 'darkorange', 'lightgreen']
-    hoverlabel = ("Frequency: "*len(labels_)).split()
-    fig = go.Figure(
-        data=[go.Pie(
-                labels=labels_,
-                values=values_,
-                showlegend=False,
-                text=hoverlabel,
-                hovertemplate="%{text} %{value}<extra></extra>"
-            )
-        ],
-        layout=go.Layout(
-            height=500,
-            width=500,
-            hoverlabel=dict(font_size=16)
-        )
-    )
-    fig.update_traces(
-        hoverinfo='text+value',
-        textinfo='label+percent',
-        textfont_size=20,
-        marker=dict(colors=colors, line=dict(color='#000000', width=2)),
-        title=title_,
-        title_font=dict(size=30),
-    )
-    fig.show()
-    fig.write_html(filename)
-    fig.write_image(filename.replace("html","jpeg"))
-    #help(go.Pie)
-
-def yearGraphs(query:str,years:dict[str,dict[str,list[str]]]):
-    keys = list(years.keys())
-    keys.append("all")
-    for year in keys:
-        freqs = yeardist.getFrequency(years,year)
-        labels,values=[],[]
-        for l,v in freqs.items():
-            l=yeardist.convertKey(query,l)
-            labels.insert(0,l)
-            values.insert(0,v)
-        y="Total" if year=="all" else year
-        filename="output/resources/"+query+y+"_chart.html" 
-        title=yeardist.titles[query]+" "+y
-        if(query=="result"):
-            piechart(filename,title,labels,values)
-
-def main():
-    records = readCSV("../emd.csv")
-    queryB,queryC,queryF,queryG = yearDistributions(records)
-
-    writeHTML_records(records, "output/list.html")
-    yeardist.writeHTML(*queryB)
-    yeardist.writeHTML(*queryC)
-    yeardist.writeHTML(*queryF)
-    yeardist.writeHTML(*queryG)
-    
-    yearGraphs(*queryG)
-
-main()
+if __name__ == '__main__':
+    sys.exit(main())
