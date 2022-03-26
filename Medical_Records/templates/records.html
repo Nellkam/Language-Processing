@@ -11,25 +11,25 @@
 
     <h2>Registos</h2>
 
-    {% for r in records %}
+    {% for r in records -%}
     <h3 id="{{ r.id }}">{{ r.firstname }} {{ r.lastname }}</h3>
-        <ul >
-            <li>Género: r.gender</li>
-            <li>Idade: r.age anos</li>
-            <li>Email: r.email</li>
-            <li>Cidade: r.city</li>
-            <li>Modalidade: r.sport</li>
-            <li>Clube: r.club</li>
-            {% if r.fed %}
+        <ul>
+            <li>Género: {{ r.gender }}</li>
+            <li>Idade: {{ r.age  }} anos</li>
+            <li>Email: {{ r.email }}</li>
+            <li>Cidade: {{ r.city }}</li>
+            <li>Modalidade: {{ r.sport }}</li>
+            <li>Clube: {{ r.club }}</li>
+            {% if r.fed -%}
             <li>Federado: Sim</li>
-            {% else %}
+            {% else -%}
             <li>Federado: Não</li>
-            {% endif %}
-            {% if r.result %}
+            {% endif -%}
+            {% if r.result -%}
             <li>Resultado: Aprovado</li>
-            {% else %}
-            <li>Resultado: </li>
-            {% endif %}
+            {% else -%}
+            <li>Resultado: Reprovado</li>
+            {% endif -%}
         </ul>
     {% endfor %}
 </body>
