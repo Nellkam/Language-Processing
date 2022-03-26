@@ -3,22 +3,11 @@ import re
 import sys
 import yeardist
 from unidecode import unidecode
-from records import Records, markupify, writeHTML_records
+from records import Records, write_index, write_records, edge_dates
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 def main() -> int:
     records: Records = readCSV(sys.argv[1])
-
-    # Test prints - show if 300 records have been correctly parsed and validated
-    # !!! Remove before submitting
-    print("CSV FILE READ")
-    pprint.pprint(records)
-    print(f'{len(records)} total records')
-
-    file_loader = FileSystemLoader('templates')
-    env = Environment(loader=file_loader, autoescape=select_autoescape())
-
-    writeHTML_records(env, records)
 
     # execute queries
     # TODO: move to function
@@ -26,6 +15,12 @@ def main() -> int:
     queryC = yeardist.generate(records, "sport")
     queryF = yeardist.generate(records, "fed")
     queryG = yeardist.generate(records, "result")
+
+    file_loader = FileSystemLoader('templates')
+    env = Environment(loader=file_loader, autoescape=select_autoescape())
+
+    write_index(env, edge_dates(records))
+    write_records(env, records)
 
     # write queries
     # TODO: move to function
