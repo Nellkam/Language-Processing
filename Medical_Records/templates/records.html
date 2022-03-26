@@ -1,0 +1,36 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>EMD Records Template</title>
+</head>
+
+<body>
+    <h1>Exames Médicos Desportivos</h1>
+
+    <h2>Registos</h2>
+
+    {% for r in records %}
+    <h3 id="{{ r.id }}">{{ r.firstname }} {{ r.lastname }}</h3>
+        <ul >
+            <li>Género: r.gender</li>
+            <li>Idade: r.age anos</li>
+            <li>Email: r.email</li>
+            <li>Cidade: r.city</li>
+            <li>Modalidade: r.sport</li>
+            <li>Clube: r.club</li>
+            {% if r.fed %}
+            <li>Federado: Sim</li>
+            {% else %}
+            <li>Federado: Não</li>
+            {% endif %}
+            {% if r.result %}
+            <li>Resultado: Aprovado</li>
+            {% else %}
+            <li>Resultado: </li>
+            {% endif %}
+        </ul>
+    {% endfor %}
+</body>
+</html>
