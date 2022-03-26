@@ -19,8 +19,7 @@ def cities(records: Records) -> Cities:
     # return grouped_by_city
 
 def markupify_city(city: str, records: Records) -> str:
-    records.sort(key=itemgetter('firstname'))
-    records.sort(key=itemgetter('lastname'))
+    records.sort(key=itemgetter('firstname', 'lastname'))
     return cleandoc(f"""
         {city}: {len(records)}
         <ul>
@@ -47,8 +46,7 @@ def write_cities2(cities: Cities):
     makedirs(path.dirname(file), exist_ok=True)
     with open(file, 'w') as f:
         for city, records in cities.items():
-            records.sort(key=itemgetter('firstname'))
-            records.sort(key=itemgetter('lastname'))
+            records.sort(key=itemgetter('firstname', 'lastname'))
             f.write(cleandoc(f"""
                 {city}: {len(records)}
                 <ul>
