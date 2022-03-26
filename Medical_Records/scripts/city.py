@@ -21,7 +21,6 @@ def cities(records: Records) -> Cities:
 def markupify_city(city: str, records: Records) -> str:
     records.sort(key=itemgetter('firstname'))
     records.sort(key=itemgetter('lastname'))
-    nl = '\n'
     return cleandoc(f"""
         {city}: {len(records)}
         <ul>
