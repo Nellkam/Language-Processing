@@ -1,6 +1,6 @@
 from typing import List, Dict
 from operator import itemgetter
-import inspect
+from inspect import cleandoc
 
 Record = Dict[str, str]
 Records = List[Record]
