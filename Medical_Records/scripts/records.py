@@ -1,12 +1,12 @@
 from typing import List, Dict
 from operator import itemgetter
-import inspect
+from inspect import cleandoc
 
 Record = Dict[str, str]
 Records = List[Record]
 
 def markupify(record: Record) -> str:
-    return inspect.cleandoc(f"""
+    return cleandoc(f"""
         <h2>{record['id']} [{record['date']}]</h2>
         <ul>
         \t<li>[{record['index']}] {record['lastname']},{record['firstname']}</li>
