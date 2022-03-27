@@ -3,11 +3,7 @@ import sys
 from os import makedirs, path
 from yeardist import records_by_year, item_groups
 from unidecode import unidecode
-<<<<<<< HEAD
 from records import Records, write_index, write_records, write_query, write_queryE, write_queryD, edge_dates
-=======
-from records import Records, write_index, write_records, edge_dates
->>>>>>> 3601ffdf33ca2bd6b7c7d51638e4669d44a1f222
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from city import cities
 from ageGender import age_gender
@@ -23,37 +19,17 @@ def main() -> int:
         'g': 'result',
     }
 
-<<<<<<< HEAD
     makedirs(path.dirname("output/"), exist_ok=True)
     
-=======
-    # execute queries
-    # TODO: move to function
-    queryB = yeardist.generate(records, "gender")
-    queryC = yeardist.generate(records, "sport")
-    queryF = yeardist.generate(records, "fed")
-    queryG = yeardist.generate(records, "result")
-
->>>>>>> 3601ffdf33ca2bd6b7c7d51638e4669d44a1f222
     file_loader = FileSystemLoader('templates')
     env = Environment(loader=file_loader, autoescape=select_autoescape())
 
     write_index(env, edge_dates(records))
     write_records(env, records)
-<<<<<<< HEAD
     for query in queries.items():
         write_query(env, recordsYear, records, *query)
     write_queryD(env, age_gender(records))
     write_queryE(env, cities(records))
-=======
-
-    # write queries
-    # TODO: move to function
-    yeardist.writeHTML(*queryB)
-    yeardist.writeHTML(*queryC)
-    yeardist.writeHTML(*queryF)
-    yeardist.writeHTML(*queryG)
->>>>>>> 3601ffdf33ca2bd6b7c7d51638e4669d44a1f222
 
     return 0
 
