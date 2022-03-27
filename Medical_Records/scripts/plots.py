@@ -1,6 +1,6 @@
 from queries import Records, item_frequencies, item_groups, records_by_year
 from typing  import Tuple, Dict
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt # type: ignore
 import numpy             as np
 
 def plot_D(age_gender: Tuple[Tuple[Records, Records]], total: int):
@@ -83,6 +83,14 @@ def plot_BFG(query: str, records: Records, item: str):
         results[year] = [*d.values()]
 
     results['total'] = [*item_frequencies(records, item).values()]
+
+    if query == 'g':
+        for year, cat in results.items():
+            if year == 'total':
+                results['total'] = list(map(lambda x: x * 100 / len(records), results['total']))
+            else:
+                total = len(records_years[year])
+                results[year] = list(map(lambda x: x * 100 / total, cat))
 
     #Template
     labels = list(results.keys())

@@ -29,12 +29,12 @@ def age_gender(records: Records) -> Tuple[Tuple[Records, Records]]:
     over35 = sorted_by_age[split_idx:]
 
     sorted_under35 = sorted(under35, key=itemgetter('gender'))
-    split_idx = bisect_right(sorted_under35, 'F', key=itemgetter('gender'))
+    split_idx = bisect_right(sorted_under35, 'Feminino', key=itemgetter('gender'))
     f_under35 = under35[:split_idx]
     m_under35 = under35[split_idx:]
 
     sorted_over35 = sorted(over35, key=itemgetter('gender'))
-    split_idx = bisect_right(sorted_over35, 'F', key=itemgetter('gender'))
+    split_idx = bisect_right(sorted_over35, 'Feminino', key=itemgetter('gender'))
     f_over35 = over35[:split_idx]
     m_over35 = over35[split_idx:]
 

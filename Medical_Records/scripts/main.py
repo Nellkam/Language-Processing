@@ -3,9 +3,10 @@ import sys
 from jinja2    import Environment, FileSystemLoader, select_autoescape
 from os        import makedirs, path
 from plots     import plot_C, plot_D, plot_BFG
-from queries   import Records, records_by_year, item_groups, item_frequencies, age_gender
+from queries   import Record, Records, edge_dates, records_by_year, item_groups, item_frequencies, age_gender
+from typing    import Dict
 from unidecode import unidecode
-from writes    import edge_dates, write_index, write_records, write_query, write_queryD, write_queryE
+from writes    import write_index, write_records, write_query, write_queryD, write_queryE
 
 def main() -> int:
     records: Records = readCSV(sys.argv[1])
@@ -71,9 +72,27 @@ def readCSV(csv_file: str) -> Records:
         next(f)
         for line in f:
             if match := pattern.match(unidecode(line)):
-                records.append(match.groupdict())
+                records.append(verbose(match.groupdict()))
 
     return records
+
+def verbose(record: Record) -> Record:
+    if record['gender'] == 'F':
+        record['gender'] = 'Feminino'
+    else:
+        record['gender'] = 'Masculino'
+
+    if record['fed'] == 'true':
+        record['fed'] = 'Sim'
+    else:
+        record['fed'] = 'Não'
+
+    if record['result'] == 'true':
+        record['result'] = 'Aprovado'
+    else:
+        record['result'] = 'Reprovado'
+
+    return record
 
 if __name__ == '__main__':
     sys.exit(main())
