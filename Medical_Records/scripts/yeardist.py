@@ -102,9 +102,26 @@ def run(records:Records):
     plot_BFG("result",data["result"])
     plot_BFG("gender",data["gender"])
     plot_BFG("fed",data["fed"])
+    
+    years = list(data["sport"].keys()) ; years.append("total")
+    for year in years:
+        freqs = getFrequency(data["sport"],year)
+        plot_C(year,freqs)
 
-def plotC(year:str,results:dict[str,int]):
-    pass
+def plot_C(year:str,sports:dict[str,int]):
+    _, ax = plt.subplots()
+
+    # Example data
+    labels = list(sports.keys())
+    y_pos = np.arange(len(labels))
+    values = [ sports[label] for label in labels ]
+
+    ax.barh(y_pos, values, align='center')
+    ax.set_yticks(y_pos, labels=labels)
+    ax.invert_yaxis()
+
+    plt.savefig(f"./output/resources/plotsport{year}.png")
+
 
 def plot_BFG(query:str,years:dict):
     #Data format
@@ -137,7 +154,7 @@ def plot_BFG(query:str,years:dict):
     category_colors = plt.colormaps['RdYlGn'](
         np.linspace(0.15, 0.85, data.shape[1]))
 
-    fig, ax = plt.subplots()
+    _, ax = plt.subplots()
     ax.invert_yaxis()
     ax.xaxis.set_visible(False)
     ax.set_xlim(0, np.sum(data, axis=1).max())
