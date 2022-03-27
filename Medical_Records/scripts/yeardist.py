@@ -129,7 +129,7 @@ def plot_C(year:str,sports:dict[str,int]):
     ax.set_yticks(y_pos, labels=labels)
     ax.invert_yaxis()
 
-    plt.savefig(f"./output/resources/plotsport{year}.png")
+    plt.savefig(f"./output/resources/plotsport{year}.png",bbox_inches="tight")
 
 def plot_BFG(query:str,years:dict):
     #Data format
@@ -179,4 +179,4 @@ def plot_BFG(query:str,years:dict):
     ax.legend(ncol=len(category_names), bbox_to_anchor=(0, 1),
               loc='lower left', fontsize='small')
 
-    plt.savefig(f"./output/resources/plot{query}.png")
+    plt.savefig(f"./output/resources/plot{query}.png",bbox_inches="tight")
