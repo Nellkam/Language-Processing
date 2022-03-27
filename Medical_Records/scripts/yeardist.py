@@ -1,6 +1,6 @@
 import re
 from records import Records
-from typing import Any, Dict, Set
+from typing import Dict, Set
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -26,10 +26,10 @@ def convertKey(query: str, key: str) -> str:
     else:
         return key
 
-def generate(records: Records, query: str) -> tuple[str, dict]:
-    years: Dict[Any, Any] = {}
+def generate(records: Records, query: str) -> Dict[str,Dict[str,Set[str]]]:
+    years: Dict[str,Dict[str,Set[str]]] = {}
     if query != "gender" and query != "sport" and query != "fed" and query != "result":
-        return ("", {})
+        return {}
     for record in records:
         year = re.findall(r'^\d+', record["date"])[0]
         if year not in years:
@@ -37,7 +37,7 @@ def generate(records: Records, query: str) -> tuple[str, dict]:
         if record[query] not in years[year]:
             years[year][record[query]] = set()
         years[year][record[query]].add(record["id"])
-    return (query, years)
+    return years
 
 def getFrequency(years: dict, year: str = None) -> dict[str, int]:
     result: Dict[str, int] = {}
@@ -89,29 +89,22 @@ def writeHTML(query: str, years: dict, listPath: str):
                 f.write("</ul>")
             f.write("\n</body>\n")
 
+# main function, the one and only you shall not forget
 def run(records:Records):
-    queries = "gender sport fed result".split()
-    data = {}
+    for q in "gender sport fed result".split():
+        data = generate(records,q)
+        writeHTML(q,data,"./output/list.html")
+        if q!="sport":
+            plot_BFG(q,data)
+        else:
+            years = list(data.keys())
+            years.append("total")
+            for year in years:
+                freqs = getFrequency(data,year)
+                plot_C(year,freqs)
     
-    #Text
-    for q in queries:
-        data[q] = generate(records,q)[1]
-        writeHTML(q,data[q],"./output/list.html")
-    
-    #Plots
-    plot_BFG("result",data["result"])
-    plot_BFG("gender",data["gender"])
-    plot_BFG("fed",data["fed"])
-    
-    years = list(data["sport"].keys()) ; years.append("total")
-    for year in years:
-        freqs = getFrequency(data["sport"],year)
-        plot_C(year,freqs)
-
 def plot_C(year:str,sports:dict[str,int]):
     _, ax = plt.subplots()
-
-    # Example data
     labels = list(sports.keys())
     y_pos = np.arange(len(labels))
     values = [ sports[label] for label in labels ]
@@ -121,7 +114,6 @@ def plot_C(year:str,sports:dict[str,int]):
     ax.invert_yaxis()
 
     plt.savefig(f"./output/resources/plotsport{year}.png")
-
 
 def plot_BFG(query:str,years:dict):
     #Data format
