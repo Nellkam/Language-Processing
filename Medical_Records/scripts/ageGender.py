@@ -62,8 +62,8 @@ def plot_age_gender(age_gender: Tuple[Tuple[Records, Records]], total: int):
 
     labels = ['<35', '>=35']
 
-    labels = ['F >= 35', 'M < 35', 'F < 35', 'M >= 35']
-    slices = [f_over35, m_under35, f_under35, m_over35]
+    labels = ['F >= 35', 'F < 35', 'M < 35', 'M >= 35']
+    slices = [f_over35, f_under35, m_under35, m_over35]
     colors = ['mediumvioletred', 'deeppink', 'mediumblue', 'darkblue']
 
     plt.pie(slices,
