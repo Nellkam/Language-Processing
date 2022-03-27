@@ -1,0 +1,23 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>EMD Index Template</title>
+</head>
+
+<body>
+    <h1>Exames Médicos Desportivos</h1>
+
+    <h2>Distribuição por morada</h2>
+
+    {% for city, records in cities.items() -%}
+    <h3>{{ city }}</h3>
+        <ul>
+            {% for r in records %}
+            <li><a href="records.html#{{ r.id }}">{{ r.firstname }} {{ r.lastname }}</a></li>
+            {% endfor -%}
+        </ul>
+    {% endfor -%}
+</body>
+</html>

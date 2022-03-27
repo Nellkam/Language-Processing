@@ -9,12 +9,20 @@
 <body>
     <h1>Exames Médicos Desportivos</h1>
 
-    <h2>Distribuição por modalidade em {{ year }}</h2>
+    {% if query == 'b' -%}
+    <h2>Distribuição por género em
+    {%- elif query == 'c' -%}
+    <h2>Distribuição por modalidade em
+    {%- elif query == 'f' -%}
+    <h2>Distribuição por estatuto de federado em
+    {%- elif query == 'g' -%}
+    <h2>Percentagem de aptos e não aptos em
+    {% endif %} {{ year }}</h2>
 
     Picture
 
-    {% for sport, records in item.items() -%}
-    <h3>{{ sport }}</h3>
+    {% for i, records in item.items() -%}
+    <h3>{{ i }}: {{ records|length }}</h3>
         <ul>
             {% for r in records-%}
             <li><a href="records.html#{{ r.id }}">{{ r.firstname }} {{ r.lastname }}</a></li>

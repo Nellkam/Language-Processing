@@ -1,11 +1,11 @@
-import pprint
 import re
 import sys
 from os import makedirs, path
 from yeardist import records_by_year, item_groups
 from unidecode import unidecode
-from records import Records, write_index, write_records, write_query, write_subquery, edge_dates
+from records import Records, write_index, write_records, write_query, write_queryE, edge_dates
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from city import cities
 
 def main() -> int:
     records: Records = readCSV(sys.argv[1])
@@ -19,31 +19,18 @@ def main() -> int:
 
     write_index(env, edge_dates(records))
     write_records(env, records)
-    write_query(env, recordsYear.keys(), item_groups(records, 'gender'), 'b')
-    write_subquery(env, recordsYear, 'gender', 'b')
-    write_query(env, recordsYear.keys(), item_groups(records, 'sport'), 'c')
-    write_subquery(env, recordsYear, 'sport', 'c')
-    write_query(env, recordsYear.keys(), item_groups(records, 'fed'), 'f')
-    write_subquery(env, recordsYear, 'fed', 'f')
-    write_query(env, recordsYear.keys(), item_groups(records, 'result'), 'g')
-    write_subquery(env, recordsYear, 'result', 'g')
-    # write_queryC()
-    # write_queryD()
-    # write_queryE()
-    # write_queryF()
-    # write_queryG()
 
-    # execute queries
-    # queryB = generate(records, "gender")
-    # queryC = generate(records, "sport")
-    # queryF = generate(records, "fed")
-    # queryG = generate(records, "result")
+    queries: Dict[str, str] = {
+        'b': 'gender',
+        'c': 'sport',
+        'f': 'fed',
+        'g': 'result',
+    }
 
-    # write queries
-    # yeardist.writeHTML(*queryB)
-    # yeardist.writeHTML(*queryC)
-    # yeardist.writeHTML(*queryF)
-    # yeardist.writeHTML(*queryG)
+    for query in queries.items():
+        write_query(env, recordsYear, records, *query)
+
+    write_queryE(env, cities(records))
 
     return 0
 
