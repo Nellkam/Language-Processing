@@ -1,5 +1,5 @@
-from typing import List, Dict, Tuple
 from operator import itemgetter
+from typing   import List, Dict, Tuple
 from yeardist import item_groups
 
 Record = Dict[str, str]

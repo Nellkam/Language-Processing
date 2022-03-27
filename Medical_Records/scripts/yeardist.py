@@ -1,10 +1,8 @@
-import os
-import re
 from itertools import groupby
-from typing import Any, List, Dict, Set
-from operator import itemgetter
+from operator  import itemgetter
+from typing    import List, Dict
 import matplotlib.pyplot as plt
-import numpy as np
+import numpy             as np
 
 Record = Dict[str, str]
 Records = List[Record]
@@ -45,6 +43,8 @@ def plot_BFG(query: str, records: Records, item: str):
             if c not in d:
                 d[c] = 0
         results[year] = [*d.values()]
+
+    results['total'] = [*item_frequencies(records, item).values()]
 
     #Template
     labels = list(results.keys())
