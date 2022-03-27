@@ -26,7 +26,7 @@
     <h2>TOTAL</h2>
 
     {% for item, records in total.items() -%}
-    <h3>{{ item }}: {{ records|length }}</h3>
+    <h3>{{ item }}: {{ records|length }} - {{ (records|length / size * 100)|round(2) }}%</h3>
         <ul>
             {% for r in records-%}
             <li><a href="records.html#{{ r.id }}">{{ r.firstname }} {{ r.lastname }}</a></li>

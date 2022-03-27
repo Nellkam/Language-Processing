@@ -3,23 +3,15 @@ import sys
 from os import makedirs, path
 from yeardist import records_by_year, item_groups
 from unidecode import unidecode
-from records import Records, write_index, write_records, write_query, write_queryE, edge_dates
+from records import Records, write_index, write_records, write_query, write_queryE, write_queryD, edge_dates
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from city import cities
+from ageGender import age_gender
 
 def main() -> int:
     records: Records = readCSV(sys.argv[1])
-    
-    makedirs(path.dirname("output/"), exist_ok=True)
-
     recordsYear: Dict[str, Records] = records_by_year(records)
     
-    file_loader = FileSystemLoader('templates')
-    env = Environment(loader=file_loader, autoescape=select_autoescape())
-
-    write_index(env, edge_dates(records))
-    write_records(env, records)
-
     queries: Dict[str, str] = {
         'b': 'gender',
         'c': 'sport',
@@ -27,9 +19,16 @@ def main() -> int:
         'g': 'result',
     }
 
+    makedirs(path.dirname("output/"), exist_ok=True)
+    
+    file_loader = FileSystemLoader('templates')
+    env = Environment(loader=file_loader, autoescape=select_autoescape())
+
+    write_index(env, edge_dates(records))
+    write_records(env, records)
     for query in queries.items():
         write_query(env, recordsYear, records, *query)
-
+    write_queryD(env, age_gender(records))
     write_queryE(env, cities(records))
 
     return 0

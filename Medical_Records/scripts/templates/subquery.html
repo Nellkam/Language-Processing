@@ -22,7 +22,7 @@
     Picture
 
     {% for i, records in item.items() -%}
-    <h3>{{ i }}: {{ records|length }}</h3>
+    <h3>{{ i }}: {{ records|length }} - {{ (records|length / size * 100)|round(2) }}</h3>
         <ul>
             {% for r in records-%}
             <li><a href="records.html#{{ r.id }}">{{ r.firstname }} {{ r.lastname }}</a></li>

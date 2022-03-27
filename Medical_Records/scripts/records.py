@@ -22,7 +22,8 @@ def write_query(env, years: Dict[str, Records], records: Records, query: str, it
         f.write(template.render(
             query=query,
             years=years.keys(),
-            total=item_groups(records, item)
+            total=item_groups(records, item),
+            size=len(records)
         ))
 
     template = env.get_template(f'subquery.html')
@@ -31,8 +32,14 @@ def write_query(env, years: Dict[str, Records], records: Records, query: str, it
             f.write(template.render(
                 query=query,
                 year=year,
-                item=item_groups(records, item)
+                item=item_groups(records, item),
+                size=len(records)
             ))
+
+def write_queryD(env, dist: Tuple[Tuple[Records, Records]]):
+    template = env.get_template(f'queryd.html')
+    with open(f"output/queryd.html", 'w') as f:
+        f.write(template.render(dist = dist))
 
 def write_queryE(env, cities: Dict[str, Record]):
     template = env.get_template(f'querye.html')

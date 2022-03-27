@@ -1,0 +1,39 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>EMD Index Template</title>
+</head>
+
+<body>
+    <h1>Exames Médicos Desportivos</h1>
+
+    <h2>Distribuição por idade e género</h2>
+
+    <h3>Mulheres abaixo de 35 anos: {{ dist[0][0]|length }}</h3>
+        <ul>
+            {% for r in dist[0][0] -%}
+            <li><a href="records.html#{{ r.id }}">{{ r.firstname }} {{ r.lastname }}</a>: {{ r.age }} anos</li>
+            {% endfor -%}
+        </ul>
+    <h3>Homemens abaixo de 35 anos: {{ dist[0][1]|length }}</h3>
+        <ul>
+            {% for r in dist[0][1] -%}
+            <li><a href="records.html#{{ r.id }}">{{ r.firstname }} {{ r.lastname }}</a>: {{ r.age }} anos</li>
+            {% endfor -%}
+        </ul>
+    <h3>Mulheres acima de 35 anos inclusive: {{ dist[1][0]|length }}</h3>
+        <ul>
+            {% for r in dist[1][0] -%}
+            <li><a href="records.html#{{ r.id }}">{{ r.firstname }} {{ r.lastname }}</a>: {{ r.age }} anos</li>
+            {% endfor -%}
+        </ul>
+    <h3>Homemens acima de 35 anos inclusive: {{ dist[1][1]|length }}</h3> 
+        <ul>
+            {% for r in dist[1][1] -%}
+            <li><a href="records.html#{{ r.id }}">{{ r.firstname }} {{ r.lastname }}</a>: {{ r.age }} anos</li>
+            {% endfor -%}
+        </ul>
+</body>
+</html>
