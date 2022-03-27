@@ -1,9 +1,9 @@
 from queries import Records, item_frequencies, item_groups, records_by_year
-from typing  import Tuple, Dict
+from typing  import Dict, List, Tuple
 import matplotlib.pyplot as plt # type: ignore
 import numpy             as np
 
-def plot_D(age_gender: Tuple[Tuple[Records, Records]], total: int):
+def plot_D(age_gender: Tuple[Tuple[Records, Records], Tuple[Records,Records]], total: int):
     f = len(age_gender[0][0]) + len(age_gender[1][0])
     m = len(age_gender[0][1]) + len(age_gender[1][1])
     under35 = len(age_gender[0][0]) + len(age_gender[0][1])
@@ -74,7 +74,7 @@ def plot_BFG(query: str, records: Records, item: str):
     category_names = item_groups(records, item).keys()
     records_years = records_by_year(records)
 
-    results = {}
+    results: Dict[str, List[float]] = {}
     for year, recs in records_years.items():
         d = item_frequencies(recs, item)
         for c in category_names:

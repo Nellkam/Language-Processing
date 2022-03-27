@@ -1,6 +1,7 @@
 import re
 import sys
 from jinja2    import Environment, FileSystemLoader, select_autoescape
+from operator  import itemgetter
 from os        import makedirs, path
 from plots     import plot_C, plot_D, plot_BFG
 from queries   import Record, Records, edge_dates, records_by_year, item_groups, item_frequencies, age_gender
@@ -36,9 +37,9 @@ def main() -> int:
     plot_D(age_gender(records), len(records))
     for year, rs in recordsYear.items():
         plot_C(year, item_frequencies(rs, 'sport'))
-    for query, item in queries.items():
+    for query, item in queries.items(): # type: ignore
         if query != 'c':
-            plot_BFG(query, records, item)
+            plot_BFG(query, records, item) # type: ignore
 
     return 0
 
@@ -74,7 +75,7 @@ def readCSV(csv_file: str) -> Records:
             if match := pattern.match(unidecode(line)):
                 records.append(verbose(match.groupdict()))
 
-    return records
+    return sorted(records, key=itemgetter('firstname', 'lastname'))
 
 def verbose(record: Record) -> Record:
     if record['gender'] == 'F':

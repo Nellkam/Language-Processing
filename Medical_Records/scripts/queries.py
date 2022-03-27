@@ -22,7 +22,7 @@ def item_groups(records: Records, item: str) -> Dict[str, Records]:
     f = itemgetter(item)
     return {k: [*g] for k, g in groupby(sorted(records, key=f), key=f)}
 
-def age_gender(records: Records) -> Tuple[Tuple[Records, Records]]:
+def age_gender(records: Records) -> Tuple[Tuple[Records, Records], Tuple[Records, Records]]:
     sorted_by_age = sorted(records, key=itemgetter('age'))
     split_idx = bisect_left(sorted_by_age, '35', key=itemgetter('age'))
     under35 = sorted_by_age[:split_idx]

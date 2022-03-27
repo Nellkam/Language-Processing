@@ -8,10 +8,9 @@ def write_index(env, dates: Tuple[str, str]):
         f.write(template.render(dates=dates))
 
 def write_records(env, records: Records):
-    records_by_name = sorted(records, key=itemgetter('firstname', 'lastname'))
     template = env.get_template('records.html')
     with open('output/records.html', 'w') as f:
-        f.write(template.render(records=records_by_name))
+        f.write(template.render(records=records))
 
 def write_query(env, years: Dict[str, Records], records: Records, query: str, item: str):
     template = env.get_template(f'query.html')
@@ -33,12 +32,12 @@ def write_query(env, years: Dict[str, Records], records: Records, query: str, it
                 size=len(records)
             ))
 
-def write_queryD(env, dist: Tuple[Tuple[Records, Records]]):
+def write_queryD(env, dist: Tuple[Tuple[Records, Records], Tuple[Records, Records]]):
     template = env.get_template(f'queryd.html')
     with open(f"output/queryd.html", 'w') as f:
         f.write(template.render(dist = dist))
 
-def write_queryE(env, cities: Dict[str, Record]):
+def write_queryE(env, cities: Dict[str, Records]):
     template = env.get_template(f'querye.html')
     with open(f"output/querye.html", 'w') as f:
         f.write(template.render(cities = cities))
