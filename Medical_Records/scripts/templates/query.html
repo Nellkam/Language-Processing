@@ -25,6 +25,8 @@
 
     <h2>TOTAL</h2>
 
+    <img src="resources/plot{{ query }}total.png" alt="">
+
     {% for item, records in total.items() -%}
     <h3>{{ item }}: {{ records|length }} - {{ (records|length / size * 100)|round(2) }}%</h3>
         <ul>

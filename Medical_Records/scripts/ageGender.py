@@ -43,7 +43,7 @@ def plot_age_gender(age_gender: Tuple[Tuple[Records, Records]], total: int):
             radius = 1,
             autopct = '%1.2f%%')
 
-    plt.savefig("output/resources/gender.png")
+    plt.savefig("output/resources/gender.png", bbox_inches='tight')
     plt.clf()
 
     labels = ['<35', '>=35']
@@ -57,7 +57,7 @@ def plot_age_gender(age_gender: Tuple[Tuple[Records, Records]], total: int):
             radius = 1,
             autopct = '%1.2f%%')
 
-    plt.savefig("output/resources/age.png")
+    plt.savefig("output/resources/age.png", bbox_inches='tight')
     plt.clf()
 
     labels = ['<35', '>=35']
@@ -73,5 +73,5 @@ def plot_age_gender(age_gender: Tuple[Tuple[Records, Records]], total: int):
             radius = 1,
             autopct = '%1.2f%%')
 
-    plt.savefig("output/resources/age_gender.png")
+    plt.savefig("output/resources/age_gender.png", bbox_inches='tight')
     plt.clf()

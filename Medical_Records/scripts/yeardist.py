@@ -3,6 +3,8 @@ import re
 from itertools import groupby
 from typing import Any, List, Dict, Set
 from operator import itemgetter
+import matplotlib.pyplot as plt
+import numpy as np
 
 Record = Dict[str, str]
 Records = List[Record]
@@ -19,62 +21,54 @@ def item_groups(records: Records, item: str) -> Dict[str, Records]:
     f = itemgetter(item)
     return {k: [*g] for k, g in groupby(sorted(records, key=f), key=f)}
 
-# def getFrequency(years: dict, year: str = None) -> dict[str, int]:
-#     result: Dict[str, int] = {}
-#     for y, dist in years.items():
-#         if year is None or year == y or year == "all":
-#             for k, ids in dist.items():
-#                 if k not in result:
-#                     result[k] = 0
-#                 result[k] += len(ids)
-#         if year is not None and year == y:
-#             break
-#     return result
-# 
-# def getIds(years: dict, year: str = None) -> dict[str, set[str]]:
-#     result: Dict[str, Set[str]] = {}
-#     for y, dist in years.items():
-#         if year is None or year == y or year == "all":
-#             for k, ids in dist.items():
-#                 if k not in result:
-#                     result[k] = set()
-#                 result[k] = result[k].union(ids)
-#         if year is not None and year == y:
-#             break
-#     return result
-# 
-# def convertKey(query: str, key: str) -> str:
-#     if key == "M":
-#         return "Male"
-#     elif key == "F":
-#         return "Female"
-#     elif key == "true":
-#         return "Pass" if query == "result" else "True"
-#     elif key == "false":
-#         return "Not Pass" if query == "result" else "False"
-#     else:
-#         return key
-# 
-# def writeHTML(query: str, years: dict):
-#     titles = {
-#         "sport": "Sports Distribution",
-#         "gender": "Gender Distribution",
-#         "fed": "Federate Status",
-#         "result": "Medical Fitness Results"
-#     }
-# 
-#     keys = list(years.keys())
-#     keys.append("all")
-#     for year in keys:
-#         freq = getFrequency(years, year)
-#         ids = getIds(years, year)
-#         filename = f"output/{query}{year if year != 'all' else 'total'}.html"
-#         os.makedirs(os.path.dirname(filename), exist_ok=True)
-#         with open(filename, "w") as f:
-#             f.write(f"<h1>{titles[query]} {year if year!='all' else 'Total'} </h1>")
-#             for key in freq.keys():
-#                 f.write(f"<h2>{'='*10} {convertKey(query,key)} [{freq[key]}] {'='*10}</h2>\n<ul>\n")
-#                 for id in ids[key]:
-#                     f.write(f"\t<li>{id}</li>\n")
-#                 f.write("</ul>")
-# 
+def plot_C(year: str, sports: Dict[str, int]):
+    _, ax = plt.subplots()
+    labels = list(sports.keys())
+    y_pos = np.arange(len(labels))
+    values = [ sports[label] for label in labels ]
+
+    ax.barh(y_pos, values, align='center')
+    ax.set_yticks(y_pos, labels=labels)
+    ax.invert_yaxis()
+
+    plt.savefig(f"./output/resources/plotc{year}.png", bbox_inches="tight")
+    plt.clf()
+
+def plot_BFG(query: str, records: Records, item: str):
+    category_names = item_groups(records, item).keys()
+    records_years = records_by_year(records)
+
+    results = {}
+    for year, recs in records_years.items():
+        d = item_frequencies(recs, item)
+        for c in category_names:
+            if c not in d:
+                d[c] = 0
+        results[year] = [*d.values()]
+
+    #Template
+    labels = list(results.keys())
+    data = np.array(list(results.values()))
+    data_cum = data.cumsum(axis=1)
+    category_colors = plt.colormaps['RdYlGn'](
+        np.linspace(0.15, 0.85, data.shape[1]))
+
+    _, ax = plt.subplots()
+    ax.invert_yaxis()
+    ax.xaxis.set_visible(False)
+    ax.set_xlim(0, np.sum(data, axis=1).max())
+
+    for i, (colname, color) in enumerate(zip(category_names, category_colors)):
+        widths = data[:, i]
+        starts = data_cum[:, i] - widths
+        rects = ax.barh(labels, widths, left=starts, height=0.2,
+                        label=colname, color=color, align="center")
+
+        r, g, b, _ = color
+        text_color = 'white' if r * g * b < 0.5 else 'darkgrey'
+        ax.bar_label(rects, label_type='center', color=text_color)
+    ax.legend(ncol=len(category_names), bbox_to_anchor=(0, 1),
+              loc='lower left', fontsize='small')
+
+    plt.savefig(f"./output/resources/plot{query}total.png",bbox_inches="tight")
+    plt.clf()

@@ -1,7 +1,7 @@
 import re
 import sys
 from os import makedirs, path
-from yeardist import records_by_year, item_groups
+from yeardist import records_by_year, item_groups, item_frequencies, plot_C, plot_BFG
 from unidecode import unidecode
 from records import Records, write_index, write_records, write_query, write_queryE, write_queryD, edge_dates
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -33,6 +33,12 @@ def main() -> int:
     write_queryE(env, cities(records))
 
     plot_age_gender(age_gender(records), len(records))
+    plot_C('total', item_frequencies(records, 'sport'))
+    for year, rs in recordsYear.items():
+        plot_C(year, item_frequencies(rs, 'sport'))
+
+    for query, item in queries.items():
+        plot_BFG(query, records, item)
 
     return 0
 

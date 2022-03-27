@@ -19,7 +19,7 @@
     <h2>Percentagem de aptos e não aptos em
     {% endif %} {{ year }}</h2>
 
-    Picture
+    <img src="resources/plot{{ query }}{{ year }}.png" alt="">
 
     {% for i, records in item.items() -%}
     <h3>{{ i }}: {{ records|length }} - {{ (records|length / size * 100)|round(2) }}</h3>
