@@ -1,18 +1,26 @@
 from typing import List, Dict, Tuple
 from operator import itemgetter
+<<<<<<< HEAD
 from yeardist import item_groups
+=======
+>>>>>>> 3601ffdf33ca2bd6b7c7d51638e4669d44a1f222
 
 Record = Dict[str, str]
 Records = List[Record]
 
 def write_index(env, dates: Tuple[str, str]):
     template = env.get_template('index.html')
+<<<<<<< HEAD
     with open('output/index.html', 'w') as f:
+=======
+    with open('index.html', 'w') as f:
+>>>>>>> 3601ffdf33ca2bd6b7c7d51638e4669d44a1f222
         f.write(template.render(dates=dates))
 
 def write_records(env, records: Records):
     records_by_name = sorted(records, key=itemgetter('firstname', 'lastname'))
     template = env.get_template('records.html')
+<<<<<<< HEAD
     with open('output/records.html', 'w') as f:
         f.write(template.render(records=records_by_name))
 
@@ -46,6 +54,11 @@ def write_queryE(env, cities: Dict[str, Record]):
     with open(f"output/querye.html", 'w') as f:
         f.write(template.render(cities = cities))
 
+=======
+    with open('records.html', 'w') as f:
+        f.write(template.render(records=records_by_name))
+
+>>>>>>> 3601ffdf33ca2bd6b7c7d51638e4669d44a1f222
 def edge_dates(records: Records) -> Tuple[str, str]:
     date = itemgetter('date')
     return (min(records, key=date)['date'], max(records, key=date)['date'])
