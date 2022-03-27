@@ -1,23 +1,61 @@
-from itertools import groupby
-from operator  import itemgetter
-from typing    import List, Dict
+from queries import Records, item_frequencies, item_groups, records_by_year
+from typing  import Tuple, Dict
 import matplotlib.pyplot as plt
 import numpy             as np
 
-Record = Dict[str, str]
-Records = List[Record]
+def plot_D(age_gender: Tuple[Tuple[Records, Records]], total: int):
+    f = len(age_gender[0][0]) + len(age_gender[1][0])
+    m = len(age_gender[0][1]) + len(age_gender[1][1])
+    under35 = len(age_gender[0][0]) + len(age_gender[0][1])
+    over35 = len(age_gender[1][0]) + len(age_gender[1][1])
+    f_under35 = len(age_gender[0][0])
+    m_under35 = len(age_gender[0][1])
+    f_over35 = len(age_gender[1][0])
+    m_over35 = len(age_gender[1][1])
 
-def records_by_year(records: Records) -> Dict[str, Records]:
-    year = lambda x: x['date'][:4]
-    return {k: [*g] for k, g in groupby(sorted(records, key=year), key=year)}
+    labels = ['F', 'M']
+    slices = [f, m]
+    colors = ['deeppink', 'mediumblue']
+    
+    plt.pie(slices,
+            labels = labels,
+            colors = colors,
+            startangle = 90,
+            radius = 1,
+            autopct = '%1.2f%%')
 
-def item_frequencies(records: Records, item: str) -> Dict[str, int]:
-    f = itemgetter(item)
-    return {k: len([*g]) for k, g in groupby(sorted(records, key=f), key=f)}
+    plt.savefig("output/resources/gender.png", bbox_inches='tight')
+    plt.clf()
 
-def item_groups(records: Records, item: str) -> Dict[str, Records]:
-    f = itemgetter(item)
-    return {k: [*g] for k, g in groupby(sorted(records, key=f), key=f)}
+    labels = ['<35', '>=35']
+    slices = [under35, over35]
+    colors = ['lightgrey', 'grey']
+    
+    plt.pie(slices,
+            labels = labels,
+            colors = colors,
+            startangle = 90 + f_over35 * 360 / total,
+            radius = 1,
+            autopct = '%1.2f%%')
+
+    plt.savefig("output/resources/age.png", bbox_inches='tight')
+    plt.clf()
+
+    labels = ['<35', '>=35']
+
+    labels = ['F >= 35', 'F < 35', 'M < 35', 'M >= 35']
+    slices = [f_over35, f_under35, m_under35, m_over35]
+    colors = ['mediumvioletred', 'deeppink', 'mediumblue', 'darkblue']
+
+    plt.pie(slices,
+            labels = labels,
+            colors = colors,
+            startangle = 90,
+            radius = 1,
+            autopct = '%1.2f%%')
+
+    plt.savefig("output/resources/age_gender.png", bbox_inches='tight')
+    plt.clf()
 
 def plot_C(year: str, sports: Dict[str, int]):
     _, ax = plt.subplots()

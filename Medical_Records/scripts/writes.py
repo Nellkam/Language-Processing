@@ -1,9 +1,6 @@
 from operator import itemgetter
 from typing   import List, Dict, Tuple
-from yeardist import item_groups
-
-Record = Dict[str, str]
-Records = List[Record]
+from queries  import Record, Records, item_groups
 
 def write_index(env, dates: Tuple[str, str]):
     template = env.get_template('index.html')

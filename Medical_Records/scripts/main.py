@@ -1,12 +1,11 @@
 import re
 import sys
-from os        import makedirs, path
-from yeardist  import records_by_year, item_groups, item_frequencies, plot_C, plot_BFG
-from unidecode import unidecode
-from records   import Records, write_index, write_records, write_query, write_queryE, write_queryD, edge_dates
 from jinja2    import Environment, FileSystemLoader, select_autoescape
-from city      import cities
-from ageGender import age_gender, plot_age_gender
+from os        import makedirs, path
+from plots     import plot_C, plot_D, plot_BFG
+from queries   import Records, records_by_year, item_groups, item_frequencies, age_gender
+from unidecode import unidecode
+from writes    import edge_dates, write_index, write_records, write_query, write_queryD, write_queryE
 
 def main() -> int:
     records: Records = readCSV(sys.argv[1])
@@ -30,13 +29,12 @@ def main() -> int:
     for query in queries.items():
         write_query(env, recordsYear, records, *query)
     write_queryD(env, age_gender(records))
-    write_queryE(env, cities(records))
+    write_queryE(env, item_groups(records, 'city'))
 
-    plot_age_gender(age_gender(records), len(records))
     plot_C('total', item_frequencies(records, 'sport'))
+    plot_D(age_gender(records), len(records))
     for year, rs in recordsYear.items():
         plot_C(year, item_frequencies(rs, 'sport'))
-
     for query, item in queries.items():
         if query != 'c':
             plot_BFG(query, records, item)
