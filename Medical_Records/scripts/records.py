@@ -16,16 +16,16 @@ def write_records(env, records: Records):
     with open('output/records.html', 'w') as f:
         f.write(template.render(records=records_by_name))
 
-def write_queryB(env, years: List[str], total: Dict[str, Records]):
-    template = env.get_template('queryb.html')
-    with open('output/queryb.html', 'w') as f:
-        f.write(template.render(years=years, total=total))
+def write_query(env, years: List[str], total: Dict[str, Records], query: str):
+    template = env.get_template(f'query.html')
+    with open(f'output/query{query}.html', 'w') as f:
+        f.write(template.render(query=query, years=years, total=total))
 
-def write_subqueryB(env, years: Dict[str, Records]):
-    template = env.get_template('subqueryb.html')
+def write_subquery(env, years: Dict[str, Records], item: str, query: str):
+    template = env.get_template(f'subquery.html')
     for year, records in years.items():
-        with open(f'output/queryb{year}.html', 'w') as f:
-            f.write(template.render(year=year, gender=item_groups(records, 'gender')))
+        with open(f'output/query{query}{year}.html', 'w') as f:
+            f.write(template.render(year=year, item=item_groups(records, item)))
 
 def edge_dates(records: Records) -> Tuple[str, str]:
     date = itemgetter('date')

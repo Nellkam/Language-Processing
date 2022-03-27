@@ -1,0 +1,25 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>EMD Index Template</title>
+</head>
+
+<body>
+    <h1>Exames Médicos Desportivos</h1>
+
+    <h2>Distribuição por modalidade em {{ year }}</h2>
+
+    Picture
+
+    {% for sport, records in item.items() -%}
+    <h3>{{ sport }}</h3>
+        <ul>
+            {% for r in records-%}
+            <li><a href="records.html#{{ r.id }}">{{ r.firstname }} {{ r.lastname }}</a></li>
+            {% endfor -%}
+        </ul>
+    {% endfor -%}
+</body>
+</html>

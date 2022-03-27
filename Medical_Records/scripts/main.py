@@ -4,7 +4,7 @@ import sys
 from os import makedirs, path
 from yeardist import records_by_year, item_groups
 from unidecode import unidecode
-from records import Records, write_index, write_records, write_queryB, write_subqueryB, edge_dates
+from records import Records, write_index, write_records, write_query, write_subquery, edge_dates
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 def main() -> int:
@@ -19,8 +19,14 @@ def main() -> int:
 
     write_index(env, edge_dates(records))
     write_records(env, records)
-    write_queryB(env, records_by_year(records).keys(), item_groups(records, 'gender'))
-    write_subqueryB(env, recordsYear)
+    write_query(env, recordsYear.keys(), item_groups(records, 'gender'), 'b')
+    write_subquery(env, recordsYear, 'gender', 'b')
+    write_query(env, recordsYear.keys(), item_groups(records, 'sport'), 'c')
+    write_subquery(env, recordsYear, 'sport', 'c')
+    write_query(env, recordsYear.keys(), item_groups(records, 'fed'), 'f')
+    write_subquery(env, recordsYear, 'fed', 'f')
+    write_query(env, recordsYear.keys(), item_groups(records, 'result'), 'g')
+    write_subquery(env, recordsYear, 'result', 'g')
     # write_queryC()
     # write_queryD()
     # write_queryE()
