@@ -2,8 +2,7 @@ from bisect   import bisect_left, bisect_right
 from operator import itemgetter
 from records  import Records
 from typing   import Tuple
-
-from pprint import pprint
+import matplotlib.pyplot as plt
 
 def age_gender(records: Records) -> Tuple[Tuple[Records, Records]]:
     sorted_by_age = sorted(records, key=itemgetter('age'))
@@ -22,3 +21,57 @@ def age_gender(records: Records) -> Tuple[Tuple[Records, Records]]:
     m_over35 = over35[split_idx:]
 
     return ((f_under35, m_under35), (f_over35, m_over35))
+
+def plot_age_gender(age_gender: Tuple[Tuple[Records, Records]], total: int):
+    f = len(age_gender[0][0]) + len(age_gender[1][0])
+    m = len(age_gender[0][1]) + len(age_gender[1][1])
+    under35 = len(age_gender[0][0]) + len(age_gender[0][1])
+    over35 = len(age_gender[1][0]) + len(age_gender[1][1])
+    f_under35 = len(age_gender[0][0])
+    m_under35 = len(age_gender[0][1])
+    f_over35 = len(age_gender[1][0])
+    m_over35 = len(age_gender[1][1])
+
+    labels = ['F', 'M']
+    slices = [f, m]
+    colors = ['deeppink', 'mediumblue']
+    
+    plt.pie(slices,
+            labels = labels,
+            colors = colors,
+            startangle = 90,
+            radius = 1,
+            autopct = '%1.2f%%')
+
+    plt.savefig("output/resources/gender.png")
+    plt.clf()
+
+    labels = ['<35', '>=35']
+    slices = [under35, over35]
+    colors = ['lightgrey', 'grey']
+    
+    plt.pie(slices,
+            labels = labels,
+            colors = colors,
+            startangle = 90 + f_over35 * 360 / total,
+            radius = 1,
+            autopct = '%1.2f%%')
+
+    plt.savefig("output/resources/age.png")
+    plt.clf()
+
+    labels = ['<35', '>=35']
+
+    labels = ['F >= 35', 'M < 35', 'F < 35', 'M >= 35']
+    slices = [f_over35, m_under35, f_under35, m_over35]
+    colors = ['mediumvioletred', 'deeppink', 'mediumblue', 'darkblue']
+
+    plt.pie(slices,
+            labels = labels,
+            colors = colors,
+            startangle = 90,
+            radius = 1,
+            autopct = '%1.2f%%')
+
+    plt.savefig("output/resources/age_gender.png")
+    plt.clf()

@@ -6,7 +6,7 @@ from unidecode import unidecode
 from records import Records, write_index, write_records, write_query, write_queryE, write_queryD, edge_dates
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from city import cities
-from ageGender import age_gender
+from ageGender import age_gender, plot_age_gender
 
 def main() -> int:
     records: Records = readCSV(sys.argv[1])
@@ -20,6 +20,7 @@ def main() -> int:
     }
 
     makedirs(path.dirname("output/"), exist_ok=True)
+    makedirs(path.dirname("output/resources/"), exist_ok=True)
     
     file_loader = FileSystemLoader('templates')
     env = Environment(loader=file_loader, autoescape=select_autoescape())
@@ -30,6 +31,8 @@ def main() -> int:
         write_query(env, recordsYear, records, *query)
     write_queryD(env, age_gender(records))
     write_queryE(env, cities(records))
+
+    plot_age_gender(age_gender(records), len(records))
 
     return 0
 
