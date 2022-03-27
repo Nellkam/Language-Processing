@@ -1,19 +1,31 @@
 from typing import List, Dict, Tuple
 from operator import itemgetter
+from yeardist import item_groups
 
 Record = Dict[str, str]
 Records = List[Record]
 
 def write_index(env, dates: Tuple[str, str]):
     template = env.get_template('index.html')
-    with open('index.html', 'w') as f:
+    with open('output/index.html', 'w') as f:
         f.write(template.render(dates=dates))
 
 def write_records(env, records: Records):
     records_by_name = sorted(records, key=itemgetter('firstname', 'lastname'))
     template = env.get_template('records.html')
-    with open('records.html', 'w') as f:
+    with open('output/records.html', 'w') as f:
         f.write(template.render(records=records_by_name))
+
+def write_queryB(env, years: List[str], total: Dict[str, Records]):
+    template = env.get_template('queryb.html')
+    with open('output/queryb.html', 'w') as f:
+        f.write(template.render(years=years, total=total))
+
+def write_subqueryB(env, years: Dict[str, Records]):
+    template = env.get_template('subqueryb.html')
+    for year, records in years.items():
+        with open(f'output/queryb{year}.html', 'w') as f:
+            f.write(template.render(year=year, gender=item_groups(records, 'gender')))
 
 def edge_dates(records: Records) -> Tuple[str, str]:
     date = itemgetter('date')

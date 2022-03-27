@@ -1,33 +1,43 @@
 import pprint
 import re
 import sys
-import yeardist
+from os import makedirs, path
+from yeardist import records_by_year, item_groups
 from unidecode import unidecode
-from records import Records, write_index, write_records, edge_dates
+from records import Records, write_index, write_records, write_queryB, write_subqueryB, edge_dates
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 def main() -> int:
     records: Records = readCSV(sys.argv[1])
+    
+    makedirs(path.dirname("output/"), exist_ok=True)
 
-    # execute queries
-    # TODO: move to function
-    queryB = yeardist.generate(records, "gender")
-    queryC = yeardist.generate(records, "sport")
-    queryF = yeardist.generate(records, "fed")
-    queryG = yeardist.generate(records, "result")
-
+    recordsYear: Dict[str, Records] = records_by_year(records)
+    
     file_loader = FileSystemLoader('templates')
     env = Environment(loader=file_loader, autoescape=select_autoescape())
 
     write_index(env, edge_dates(records))
     write_records(env, records)
+    write_queryB(env, records_by_year(records).keys(), item_groups(records, 'gender'))
+    write_subqueryB(env, recordsYear)
+    # write_queryC()
+    # write_queryD()
+    # write_queryE()
+    # write_queryF()
+    # write_queryG()
+
+    # execute queries
+    # queryB = generate(records, "gender")
+    # queryC = generate(records, "sport")
+    # queryF = generate(records, "fed")
+    # queryG = generate(records, "result")
 
     # write queries
-    # TODO: move to function
-    yeardist.writeHTML(*queryB)
-    yeardist.writeHTML(*queryC)
-    yeardist.writeHTML(*queryF)
-    yeardist.writeHTML(*queryG)
+    # yeardist.writeHTML(*queryB)
+    # yeardist.writeHTML(*queryC)
+    # yeardist.writeHTML(*queryF)
+    # yeardist.writeHTML(*queryG)
 
     return 0
 
