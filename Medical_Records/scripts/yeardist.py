@@ -1,5 +1,5 @@
 import re
-from records import Records
+from records import Records,Record
 from typing import Dict, Set
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,8 +26,8 @@ def convertKey(query: str, key: str) -> str:
     else:
         return key
 
-def generate(records: Records, query: str) -> Dict[str,Dict[str,Set[str]]]:
-    years: Dict[str,Dict[str,Set[str]]] = {}
+def generate(records: Records, query: str) -> Dict[str,Dict[str,Set[Record]]]:
+    years: Dict[str,Dict[str,Set[Record]]] = {}
     if query != "gender" and query != "sport" and query != "fed" and query != "result":
         return {}
     for record in records:
@@ -36,7 +36,7 @@ def generate(records: Records, query: str) -> Dict[str,Dict[str,Set[str]]]:
             years[year] = {}
         if record[query] not in years[year]:
             years[year][record[query]] = set()
-        years[year][record[query]].add(record["id"])
+        years[year][record[query]].add(record)
     return years
 
 def getFrequency(years: dict, year: str = None) -> dict[str, int]:
