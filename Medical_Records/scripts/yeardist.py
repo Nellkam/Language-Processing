@@ -16,13 +16,13 @@ html5_head_template = """
 
 def convertKey(query: str, key: str) -> str:
     if key == "M":
-        return "Male"
+        return "Masculino"
     elif key == "F":
-        return "Female"
+        return "Feminino"
     elif key == "true":
-        return "Pass" if query == "result" else "True"
+        return "Aprovado" if query == "result" else "Sim"
     elif key == "false":
-        return "Not Pass" if query == "result" else "False"
+        return "Reprovado" if query == "result" else "Não"
     else:
         return key
 
@@ -99,39 +99,45 @@ def run(records:Records):
         writeHTML(q,data[q],"./output/list.html")
     
     #Plots
-    plotG(data["result"])
-    plt.show()
+    plot_BFG("result",data["result"])
+    plot_BFG("gender",data["gender"])
+    plot_BFG("fed",data["fed"])
 
 def plotC(year:str,results:dict[str,int]):
     pass
 
-def plotG(years:dict):
+def plot_BFG(query:str,years:dict):
+    #Data format
     results:dict[str,list[int]] = {}
     category_names:list[str] = [] 
 
     ykeys = list(years.keys()) ; ykeys.sort()
     ykeys.append("total")
-    print(years.keys())
     for year in ykeys:
-        print(year)
         freqs = getFrequency(years,year)
         category_names = list(freqs.keys()) ; category_names.sort()
         values = []
+
         for label in category_names:
             values.append(freqs[label])
+
         total = sum(values)
-        values = list(map(lambda abs:abs/total*100,values))
+
+        if query=="result":
+            values = list(map(lambda abs:round(abs/total*100),values))
+
         results[year] =  values
     
-    category_names[0] = "Pass" if category_names[0]=="true" else "Not Pass"
-    category_names[1] = "Pass" if category_names[1]=="true" else "Not Pass"
+    category_names = list(map(lambda key:convertKey(query,key),category_names))
+     
+    #Template
     labels = list(results.keys())
     data = np.array(list(results.values()))
     data_cum = data.cumsum(axis=1)
     category_colors = plt.colormaps['RdYlGn'](
         np.linspace(0.15, 0.85, data.shape[1]))
 
-    fig, ax = plt.subplots(figsize=(9.2, 5))
+    fig, ax = plt.subplots()
     ax.invert_yaxis()
     ax.xaxis.set_visible(False)
     ax.set_xlim(0, np.sum(data, axis=1).max())
@@ -140,7 +146,7 @@ def plotG(years:dict):
         widths = data[:, i]
         starts = data_cum[:, i] - widths
         rects = ax.barh(labels, widths, left=starts, height=0.2,
-                        label=colname, color=color)
+                        label=colname, color=color, align="center")
 
         r, g, b, _ = color
         text_color = 'white' if r * g * b < 0.5 else 'darkgrey'
@@ -148,4 +154,4 @@ def plotG(years:dict):
     ax.legend(ncol=len(category_names), bbox_to_anchor=(0, 1),
               loc='lower left', fontsize='small')
 
-    return fig, ax
+    plt.savefig(f"./output/resources/plot{query}.png")
