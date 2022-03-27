@@ -42,7 +42,3 @@ def write_queryE(env, cities: Dict[str, Record]):
     template = env.get_template(f'querye.html')
     with open(f"output/querye.html", 'w') as f:
         f.write(template.render(cities = cities))
-
-def edge_dates(records: Records) -> Tuple[str, str]:
-    date = itemgetter('date')
-    return (min(records, key=date)['date'], max(records, key=date)['date'])
