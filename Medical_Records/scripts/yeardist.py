@@ -1,9 +1,10 @@
 import re
-from records import Records,Record
-from typing import Dict, Set
+from itertools import groupby
+from typing import Dict, Set, List
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+from operator import itemgetter
 
 html5_head_template = """
 <!doctype html>
@@ -13,6 +14,21 @@ html5_head_template = """
 \t<title>{TITLE}</title>
 </head>
 """
+
+Record = Dict[str, str]
+Records = List[Record]
+
+def records_by_year(records: Records) -> Dict[str, Records]:
+    year = lambda x: x['date'][:4]
+    return {k: [*g] for k, g in groupby(sorted(records, key=year), key=year)}
+
+def item_frequencies(records: Records, item: str) -> Dict[str, int]:
+    f = itemgetter(item)
+    return {k: len([*g]) for k, g in groupby(sorted(records, key=f), key=f)}
+
+def item_groups(records: Records, item: str) -> Dict[str, Records]:
+    f = itemgetter(item)
+    return {k: [*g] for k, g in groupby(sorted(records, key=f), key=f)}
 
 def convertKey(query: str, key: str) -> str:
     if key == "M":
