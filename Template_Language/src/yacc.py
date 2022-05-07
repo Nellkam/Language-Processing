@@ -63,11 +63,11 @@ def p_error(p):
 parser = yacc.yacc()
 
 while True:
-   try:
-       s = input('template > ')
-   except EOFError:
-       break
-   if not s:
-       continue
-   result = parser.parse(s)
-   print('ast:', result)
+    try:
+        s = input('template > ')
+    except EOFError:
+        break
+    if not s:
+        continue
+    result = parser.parse(s)
+    print('ast:', result)
