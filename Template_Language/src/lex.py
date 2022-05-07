@@ -47,7 +47,7 @@ def t_newline(t):
 
 t_code_ignore  = ' \t'
 
-def t_error(t):
+def t_ANY_error(t):
     print(f'Illegal character {t.value[0]}')
     t.lexer.skip(1)
 
@@ -55,18 +55,18 @@ lexer = lex.lex()
 
 import readline
 
-while True:
-    try:
-        #line = input('template > ')
-        line = input()
-    except EOFError:
-        break
-    if not line:
-        continue
-    
-    lexer.input(line)   # Give input to lexer
-    while True:         # Tokenize
-        tok = lexer.token()
-        if not tok: 
-            break       # No more input
-        print(tok)
+# while True:
+#     try:
+#         #s = input('template > ')
+#         s = input()
+#     except EOFError:
+#         break
+#     if not s:
+#         continue
+#     
+#     lexer.input(s)   # Give input to lexer
+#     while True:         # Tokenize
+#         tok = lexer.token()
+#         if not tok: 
+#             break       # No more input
+#         print(tok)
