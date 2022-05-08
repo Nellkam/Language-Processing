@@ -1,4 +1,5 @@
 import ply.yacc as yacc
+from run import run
 
 from lex import tokens, literals
 
@@ -8,23 +9,23 @@ Template : Elems
 Elems : Elems Elem
       |
 
-Elem : TEXT
+Elem : text
      | Code
 
 Code : Expression
      | Statement
      | Comment
 
-Expression : OPEN ID CLOSE
+Expression : OE id CE
 
 Statement : For
           | If
 
-For : OPEN FOR ID IN ID CLOSE Elems OPEN ENDFOR CLOSE
+For : OS FOR id IN id CS Elems OS ENDFOR CS
 
-If : OPEN IF ID CLOSE
+If : OS IF id CS Elems OS ENDIF CS
 
-Comment : OPEN TEXT CLOSE
+Comment : OC text CC
 """
 
 def p_Template(p):
@@ -40,7 +41,7 @@ def p_Elems_single(p):
     p[0] = []
 
 def p_Elem_TEXT(p):
-    "Elem : TEXT"
+    "Elem : text"
     p[0] = ('text', p[1])
 
 def p_Elem_Code(p):
@@ -51,9 +52,39 @@ def p_Code_Expression(p):
     "Code : Expression"
     p[0] = p[1]
 
+def p_Code_Statement(p):
+    "Code : Statement"
+    p[0] = p[1]
+
+# ! Should comments be ignored here or in the lexer?
+def p_Code_Comment(p):
+    "Code : Comment"
+    p[0] = p[1]
+
 def p_Expression_ID(p):
-    "Expression : OPEN ID CLOSE"
+    "Expression : OE id CE"
     p[0] = ('variable', p[2])
+
+def p_Statement_if(p):
+    "Statement : If"
+    p[0] = p[1]
+
+def p_Statement_for(p):
+    "Statement : For"
+    p[0] = p[1]
+
+def p_If(p):
+    "If : OS IF id CS Elems OS ENDIF CS"
+    p[0] = ('if', p[3], p[5])
+
+def p_For(p):
+    "For : OS FOR id IN id CS Elems OS ENDFOR CS"
+    p[0] = ('for', p[3], p[5], p[7])
+
+# ! Should comments be ignored here or in the lexer?
+def p_Comment(p):
+    "Comment : OC text CC"
+    p[0] = '',
 
 # Error rule for syntax errors
 def p_error(p):
@@ -61,6 +92,8 @@ def p_error(p):
 
 # Build the parser
 parser = yacc.yacc()
+
+import readline
 
 while True:
     try:
@@ -71,3 +104,11 @@ while True:
         continue
     result = parser.parse(s)
     print('ast:', result)
+
+    d = {
+        'a': [1,2,3],
+        'b': "abc",
+    }
+    print(d)
+    run(result, d)
+    print()
