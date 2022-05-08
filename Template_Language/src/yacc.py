@@ -17,12 +17,25 @@ Code : Expression
      | Comment
 
 Expression : OE id Filters CE
+           | OE id Attributes CE
+
+Expression : OE id Ops CE
+
+Ops : Ops Op
+    |
+
+Op : '|' Filter
+   | '[' Item ']'
+   | '.' Attribute
 
 Statement : For
           | If
 
 Filters : Filters '|' id
         |
+
+Attributes : Attributes '.' id
+           |
 
 For : OS FOR id IN id CS Elems OS ENDFOR CS
 
@@ -65,9 +78,33 @@ def p_Code_Comment(p):
     "Code : Comment"
     p[0] = p[1]
 
-def p_Expression_ID(p):
-    "Expression : OE id Filters CE"
+def p_Expression(p):
+    "Expression : OE id Ops CE"
     p[0] = ('variable', p[2], p[3])
+
+def p_Ops_multiple(p):
+    "Ops : Ops Op"
+    p[0] = p[1] + [p[2]]
+
+def p_Ops_empty(p):
+    "Ops : "
+    p[0] = []
+
+def p_Op_Filter(p):
+    "Op : '|' id"
+    p[0] = ('filter', p[2])
+
+def p_Op_Item_str(p):
+    "Op : '[' str ']'"
+    p[0] = ('item', p[2][1:][:-1])
+
+def p_Op_Item_int(p):
+    "Op : '[' int ']'"
+    p[0] = ('item', int(p[2]))
+
+def p_Op_Attr(p):
+    "Op : '.' id"
+    p[0] = ('attr', p[2])
 
 def p_Statement_if(p):
     "Statement : If"
@@ -76,14 +113,6 @@ def p_Statement_if(p):
 def p_Statement_for(p):
     "Statement : For"
     p[0] = p[1]
-
-def p_Filters_multiple(p):
-    "Filters : Filters '|' id"
-    p[0] = p[1] + [p[3]]
-
-def p_Filter_empty(p):
-    "Filters : "
-    p[0] = []
 
 def p_If(p):
     "If : OS IF id CS Elems OS ENDIF CS"
@@ -117,10 +146,11 @@ while True:
     result = parser.parse(s)
     print('ast:', result)
 
-    d = {
-        'a': [1,2,3],
-        'b': "abc",
-    }
-    print(d)
-    run(result, d)
-    print()
+    # d = {
+    #     'a': [2,1,3],
+    #     'b': "abc",
+    #     'c': {'foo': 42, 'bar': 73},
+    #     'd': 42,
+    # }
+    # print(d)
+    # run(result, d)

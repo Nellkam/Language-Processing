@@ -8,10 +8,12 @@ reserved = {
     'in': 'IN',
 }
 
-literals = ('|',)
+literals = ('|', '.', '[', ']')
 
 tokens = [
     'id',
+    'int',
+    'str',
     'text',
     'OE', # Open Expression tag
     'CE', # Close Expression tag
@@ -29,6 +31,14 @@ states = (
 def t_code_id(t):
     r'[a-zA-Z_]\w*'
     t.type = reserved.get(t.value, 'id')    # Check for reserved words
+    return t
+
+def t_code_int(t):
+    r'\d+'
+    return t
+
+def t_code_str(t):
+    r'".*?"' # ! might not be safe, maybe use complement class ! can't use backreferences fsr...
     return t
 
 def t_OE(t):
@@ -92,20 +102,20 @@ def t_ANY_error(t):
 
 lexer = lex.lex()
 
-import readline
-
-while True:
-    try:
-        #s = input('template > ')
-        s = input()
-    except EOFError:
-        break
-    if not s:
-        continue
-    
-    lexer.input(s)   # Give input to lexer
-    while True:         # Tokenize
-        tok = lexer.token()
-        if not tok: 
-            break       # No more input
-        print(tok)
+# import readline
+# 
+# while True:
+#     try:
+#         #s = input('template > ')
+#         s = input()
+#     except EOFError:
+#         break
+#     if not s:
+#         continue
+#     
+#     lexer.input(s)   # Give input to lexer
+#     while True:         # Tokenize
+#         tok = lexer.token()
+#         if not tok: 
+#             break       # No more input
+#         print(tok)

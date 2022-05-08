@@ -1,16 +1,20 @@
 import builtins
 
 def run(ast, dic):
-    tmp = {}
     for x in ast:
         match x[0]:
             case 'text':
                 print(x[1], end="")
             case 'variable':
                 var = dic[x[1]]
-                for f in x[2]:
-                    func = getattr(builtins, f)
-                    var = func(var)
+                for y in x[2]:
+                    match y[0]:
+                        case 'filter':
+                            var = getattr(builtins, y[1])(var)
+                        case 'item':
+                            var = var[y[1]]
+                        case 'attr':
+                            getattr(var, y[1])() # ! should var be assigned to this? (if teh method returns a value instead of applying to var then it makes a difference)
                 print(var, end="")
             case 'if':
                 if dic[x[1]]:
@@ -21,3 +25,4 @@ def run(ast, dic):
                     run(x[3], dic)
             case _:
                 pass
+    print()
