@@ -8,11 +8,11 @@ reserved = {
     'in': 'IN',
 }
 
-literals = ()
+literals = ('|',)
 
 tokens = [
-    'text',
     'id',
+    'text',
     'OE', # Open Expression tag
     'CE', # Close Expression tag
     'OS', # Open Statement tag

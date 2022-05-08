@@ -16,16 +16,20 @@ Code : Expression
      | Statement
      | Comment
 
-Expression : OE id CE
+Expression : OE id Filters CE
 
 Statement : For
           | If
+
+Filters : Filters '|' id
+        |
 
 For : OS FOR id IN id CS Elems OS ENDFOR CS
 
 If : OS IF id CS Elems OS ENDIF CS
 
 Comment : OC text CC
+
 """
 
 def p_Template(p):
@@ -62,8 +66,8 @@ def p_Code_Comment(p):
     p[0] = p[1]
 
 def p_Expression_ID(p):
-    "Expression : OE id CE"
-    p[0] = ('variable', p[2])
+    "Expression : OE id Filters CE"
+    p[0] = ('variable', p[2], p[3])
 
 def p_Statement_if(p):
     "Statement : If"
@@ -72,6 +76,14 @@ def p_Statement_if(p):
 def p_Statement_for(p):
     "Statement : For"
     p[0] = p[1]
+
+def p_Filters_multiple(p):
+    "Filters : Filters '|' id"
+    p[0] = p[1] + [p[3]]
+
+def p_Filter_empty(p):
+    "Filters : "
+    p[0] = []
 
 def p_If(p):
     "If : OS IF id CS Elems OS ENDIF CS"

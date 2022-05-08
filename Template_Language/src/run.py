@@ -1,3 +1,5 @@
+import builtins
+
 def run(ast, dic):
     tmp = {}
     for x in ast:
@@ -5,7 +7,11 @@ def run(ast, dic):
             case 'text':
                 print(x[1], end="")
             case 'variable':
-                print(dic[x[1]], end="")
+                var = dic[x[1]]
+                for f in x[2]:
+                    func = getattr(builtins, f)
+                    var = func(var)
+                print(var, end="")
             case 'if':
                 if dic[x[1]]:
                     run(x[2], dic)
