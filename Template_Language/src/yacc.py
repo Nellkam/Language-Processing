@@ -96,7 +96,7 @@ def p_Op_Filter(p):
 
 def p_Op_Item_str(p):
     "Op : '[' str ']'"
-    p[0] = ('item', p[2][1:][:-1])
+    p[0] = ('item', p[2])
 
 def p_Op_Item_int(p):
     "Op : '[' int ']'"

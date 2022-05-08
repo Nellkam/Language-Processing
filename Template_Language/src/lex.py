@@ -28,6 +28,16 @@ states = (
    ('comment', 'exclusive'),
 )
 
+def t_code_str(t): # ! lookahead/behind might not be the best way to go as it requeries ignoring quotes
+    r'''((?<=")                 # Positive lookbehind for double quote
+             (?:\\.|[^"\\])*    # Double quoted strings
+         (?=")|                 # Positive lookahead for double quote
+         (?<=')                 # Positive lookbehind for double quote
+             (?:\\.|[^"\\])*    # Single quoted strings
+         (?='))                 # Positive lookbehind for double quote
+    '''
+    return t
+
 def t_code_id(t):
     r'[a-zA-Z_]\w*'
     t.type = reserved.get(t.value, 'id')    # Check for reserved words
@@ -35,10 +45,6 @@ def t_code_id(t):
 
 def t_code_int(t):
     r'\d+'
-    return t
-
-def t_code_str(t):
-    r'".*?"' # ! might not be safe, maybe use complement class ! can't use backreferences fsr...
     return t
 
 def t_OE(t):
@@ -94,7 +100,7 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
-t_code_ignore  = ' \t'
+t_code_ignore  = ' \t"' # ! Deal with " to fix lookahead/behind differently
 
 def t_ANY_error(t):
     print(f'Illegal character {t.value[0]}')
