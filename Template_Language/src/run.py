@@ -29,4 +29,3 @@ def run(ast, dic):
                     run(x[3], dic)
             case _:
                 pass
-    print()

@@ -16,26 +16,38 @@ tokens = [
     'int',
     'str',
     'text',
-    'OE', # Open Expression tag
-    'CE', # Close Expression tag
-    'OS', # Open Statement tag
-    'CS', # Close Statement tag
-    'OC', # Open Comment tag
-    'CC', # Close Comment tag
+    'OE', # Open  Expression {{
+    'CE', # Close Expression }}
+    'OS', # Open  Statement  {%
+    'CS', # Close Statement  %}
+    'OC', # Open  Comment    {#
+    'CC', # Close Comment    #}
     ] + list(reserved.values())
 
 states = (
    ('code', 'exclusive'),
    ('comment', 'exclusive'),
+   ('raw', 'exclusive'),
 )
 
+def t_raw(t):
+    r'{%\s*raw\s*%}'
+    t.lexer.begin('raw')
+
+def t_end_raw(t):
+    r'{%\s*endraw\s*%}'
+    t.lexer.begin('INITIAL')
+
 def t_code_str(t): # ! lookahead/behind might not be the best way to go as it requeries ignoring quotes
-    r'''((?<=")                 # Positive lookbehind for double quote
-             (?:\\.|[^"\\])*    # Double quoted strings
-         (?=")|                 # Positive lookahead for double quote
-         (?<=')                 # Positive lookbehind for double quote
-             (?:\\.|[^"\\])*    # Single quoted strings
-         (?='))                 # Positive lookbehind for double quote
+    r'''(
+          (?<=")                # Positive lookbehind for double quote
+            (?:\\.|[^"\\])*     # Double quoted strings
+          (?=")                 # Positive lookahead for double quote
+        |
+          (?<=')                # Positive lookbehind for double quote
+            (?:\\.|[^"\\])*     # Single quoted strings
+          (?=')                 # Positive lookbehind for double quote
+        )
     '''
     return t
 
@@ -85,14 +97,14 @@ def t_comment_text(t):
     '''
     return t
 
-def t_text(t):
-    r'''(?s)    # Make the '.' special character match any character at all, including a newline
-        .+?     # One or more characters, non-greedy
-        (?=     # Positive lookahead assertion
-          {{|   # Expressions
-          {%|   # Statements
-          {[#]| # Comments
-          \Z    # Matches only at the end of the string.
+def t_INITIAL_raw_text(t):
+    r'''(?s)        # Make the '.' special character match any character at all, including a newline
+        .+?         # One or more characters, non-greedy
+        (?=         # Positive lookahead assertion
+          {{|       # Expressions
+          {%|       # Statements
+          {[#]|     # Comments
+          \Z        # Matches only at the end of the string.
         )
     '''
     return t
@@ -101,7 +113,7 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
-t_code_ignore  = ' \t"' # ! Deal with " to fix lookahead/behind differently
+t_code_ignore  = ' \t"\'' # ! Deal with " to fix lookahead/behind differently
 
 def t_ANY_error(t):
     print(f'Illegal character {t.value[0]}')

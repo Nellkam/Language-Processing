@@ -16,7 +16,8 @@ Code : Expression
      | Statement
      | Comment
 
-Expression : OE id Ops CE
+Expression : OE str CE
+           | OE id Ops CE
 
 Ops : Ops Op
     |
@@ -76,7 +77,11 @@ def p_Code_Comment(p):
     "Code : Comment"
     p[0] = p[1]
 
-def p_Expression(p):
+def p_Expression_str(p):
+    "Expression : OE str CE"
+    p[0] = ('text', p[2])
+
+def p_Expression_id(p):
     "Expression : OE id Ops CE"
     p[0] = ('variable', p[2], p[3])
 
@@ -148,11 +153,13 @@ while True:
     result = parser.parse(s)
     print('ast:', result)
 
-    d = {
-        'a': [2,1,3],
-        'b': "abc",
-        'c': {'foo': 42, 'bar': 73},
-        'd': 42,
-    }
-    print(d)
-    run(result, d)
+    # d = {
+    #     'a': [2,1,3],
+    #     'b': "abc",
+    #     'c': {'foo': 42, 'bar': 73},
+    #     'd': 42,
+    # }
+
+    # print(d)
+    # run(result, d)
+    # print()
