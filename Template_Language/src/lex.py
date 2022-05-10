@@ -6,6 +6,7 @@ reserved = {
     'for': 'FOR',
     'if': 'IF',
     'in': 'IN',
+    'is': 'IS',
 }
 
 literals = ('|', '.', '[', ']')

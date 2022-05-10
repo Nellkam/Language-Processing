@@ -16,17 +16,14 @@ Code : Expression
      | Statement
      | Comment
 
-Expression : OE id Filters CE
-           | OE id Attributes CE
-
 Expression : OE id Ops CE
 
 Ops : Ops Op
     |
 
-Op : '|' Filter
-   | '[' Item ']'
-   | '.' Attribute
+Op : '|' id      # Filter
+   | '[' str ']'  # Item
+   | '.' id      # Attribute
 
 Statement : For
           | If
@@ -40,6 +37,7 @@ Attributes : Attributes '.' id
 For : OS FOR id IN id CS Elems OS ENDFOR CS
 
 If : OS IF id CS Elems OS ENDIF CS
+   | OS IF id IS id CD Elems OS ENDIF CS
 
 Comment : OC text CC
 
@@ -118,6 +116,10 @@ def p_If(p):
     "If : OS IF id CS Elems OS ENDIF CS"
     p[0] = ('if', p[3], p[5])
 
+def p_If_is(p):
+   "If : OS IF id IS id CS Elems OS ENDIF CS"
+   p[0] = ('ifis', p[3], p[5], p[7])
+
 def p_For(p):
     "For : OS FOR id IN id CS Elems OS ENDFOR CS"
     p[0] = ('for', p[3], p[5], p[7])
@@ -146,11 +148,11 @@ while True:
     result = parser.parse(s)
     print('ast:', result)
 
-    # d = {
-    #     'a': [2,1,3],
-    #     'b': "abc",
-    #     'c': {'foo': 42, 'bar': 73},
-    #     'd': 42,
-    # }
-    # print(d)
-    # run(result, d)
+    d = {
+        'a': [2,1,3],
+        'b': "abc",
+        'c': {'foo': 42, 'bar': 73},
+        'd': 42,
+    }
+    print(d)
+    run(result, d)
