@@ -17,10 +17,9 @@ tokens = [
     'float',
     'str',
     'text',
-    'ADD',
-    'SUB',
-    'MUL',
-    'DIV',
+    'ADD', 'SUB', 'MUL', 'DIV',
+    'NE', 'EQ', 'GT', 'GE', 'LT', 'LE',
+    'AND', 'OR', 'NOT',
     'OE', # Open  Expression {{
     'CE', # Close Expression }}
     'OS', # Open  Statement  {%
@@ -39,6 +38,15 @@ t_code_ADD = '\+'
 t_code_SUB = '-'
 t_code_MUL = '\*'
 t_code_DIV = '/'
+t_code_EQ = '=='
+t_code_NE = '!='
+t_code_GT = '>'
+t_code_GE = '>='
+t_code_LT = '<'
+t_code_LE = '<='
+t_code_OR = 'or'
+t_code_AND = 'and'
+t_code_NOT = 'not'
 t_code_int = r'\d(?:_?\d+)*'
 t_code_float = r'\d(?:_?\d+)*\.\d+(?:e[+-]?\d+)?'
 

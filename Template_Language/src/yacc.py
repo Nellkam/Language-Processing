@@ -109,6 +109,10 @@ OExp : Exp IN Exp
 precedence = (
     ('left', 'ADD', 'SUB'),
     ('left', 'MUL', 'DIV'),
+    ('nonassoc', 'EQ', 'NE', 'GT', 'GE', 'LT', 'LE'),  # Nonassociative operators
+    ('left', 'NOT'),
+    ('left', 'OR'),
+    ('left', 'AND'),
 )
 
 def p_Template(p):
@@ -146,12 +150,8 @@ def p_Code_Comment(p):
 
 def p_Expression(p):
     "Expression : OE Exp CE"
-    p[0] = ('print', (*p[2], []))
+    p[0] = ('print', (p[2]))
 
-# def p_Expression_str(p):
-#     "Expression : OE str CE"
-#     p[0] = ('text', p[2])
-# 
 # def p_Expression_id(p):
 #     "Expression : OE id Ops CE"
 #     p[0] = ('variable', p[2], p[3])
@@ -174,7 +174,7 @@ def p_Op_Item_str(p):
 
 def p_Op_Item_int(p):
     "Op : '[' int ']'"
-    p[0] = ('item', int(p[2]))
+    p[0] = ('item', int(p[2])) # ! Probably remove cast
 
 def p_Op_Attr(p):
     "Op : '.' id"
@@ -202,14 +202,26 @@ def p_For(p):
 
 def p_Exp_id(p):
     "Exp : id"
-    p[0] = ('variable', p[1])
+    p[0] = ('variable', p[1], [])
 
-def p_Exp_Num(p):
-    "Exp : Num"
+def p_Exp_Literal(p):
+    "Exp : Literal"
+    p[0] = p[1]
+
+def p_Literal_str(p):
+    "Literal : str"
+    p[0] = ('text', p[1])
+
+def p_Literal_Num(p):
+    "Literal : Num"
     p[0] = p[1]
 
 def p_Exp_AExp(p):
     "Exp : AExp"
+    p[0] = p[1]
+
+def p_Exp_RExp(p):
+    "Exp : RExp"
     p[0] = p[1]
 
 def p_Exp_braces(p):
@@ -239,6 +251,30 @@ def p_AExp_MUL(p):
 def p_AExp_DIV(p):
     "AExp : Exp DIV Exp"
     p[0] = ('/', p[1], p[3])
+
+def p_RExp_EQ(p):
+    "RExp : Exp EQ Exp"
+    p[0] = ('==', p[1], p[3])
+
+def p_RExp_NEQ(p):
+    "RExp : Exp NE Exp"
+    p[0] = ('!=', p[1], p[3])
+
+def p_RExp_GT(p):
+    "RExp : Exp GT Exp"
+    p[0] = ('>', p[1], p[3])
+
+def p_RExp_GE(p):
+    "RExp : Exp GE Exp"
+    p[0] = ('>=', p[1], p[3])
+
+def p_RExp_LT(p):
+    "RExp : Exp LT Exp" 
+    p[0] = ('<', p[1], p[3])
+
+def p_RExp_LE(p):
+    "RExp : Exp LE Exp"
+    p[0] = ('<=', p[1], p[3])
 
 # ! Should comments be ignored here or in the lexer?
 def p_Comment(p):
@@ -274,36 +310,8 @@ while True:
     print('dict:', d)
     print(run(result, d))
 
-# def p_Exp_RExp(p):
-#     "Exp : RExp"
-#     p[0] = ''
-# 
 # def p_Exp_LExp(p):
 #     "Exp : LExp"
-#     p[0] = ''
-# 
-# def p_RExp_LT(p):
-#     "RExp : Exp LT Exp" 
-#     p[0] = ''
-# 
-# def p_RExp_GT(p):
-#     "RExp : Exp GT Exp"
-#     p[0] = ''
-# 
-# def p_RExp_LTE(p):
-#     "RExp : Exp LTE Exp"
-#     p[0] = ''
-# 
-# def p_RExp_GTE(p):
-#     "RExp : Exp GTE Exp"
-#     p[0] = ''
-# 
-# def p_RExp_EQ(p):
-#     "RExp : Exp EQ Exp"
-#     p[0] = ''
-# 
-# def p_RExp_NEQ(p):
-#     "RExp : Exp NEQ Exp"
 #     p[0] = ''
 # 
 # def p_LExp_OR(p):
