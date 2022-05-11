@@ -14,8 +14,13 @@ literals = ('|', '.', '[', ']')
 tokens = [
     'id',
     'int',
+    'float',
     'str',
     'text',
+    'ADD',
+    'SUB',
+    'MUL',
+    'DIV',
     'OE', # Open  Expression {{
     'CE', # Close Expression }}
     'OS', # Open  Statement  {%
@@ -30,7 +35,14 @@ states = (
    ('raw', 'exclusive'),
 )
 
-def t_raw(t):
+t_code_ADD = '\+'
+t_code_SUB = '-'
+t_code_MUL = '\*'
+t_code_DIV = '/'
+t_code_int = r'\d(?:_?\d+)*'
+t_code_float = r'\d(?:_?\d+)*\.\d+(?:e[+-]?\d+)?'
+
+def t_raw(t): # ! maybe integrate into the code and make raw a reserved word
     r'{%\s*raw\s*%}'
     t.lexer.begin('raw')
 
@@ -54,10 +66,6 @@ def t_code_str(t): # ! lookahead/behind might not be the best way to go as it re
 def t_code_id(t):
     r'[a-zA-Z_]\w*'
     t.type = reserved.get(t.value, 'id')    # Check for reserved words
-    return t
-
-def t_code_int(t):
-    r'\d+'
     return t
 
 def t_OE(t):

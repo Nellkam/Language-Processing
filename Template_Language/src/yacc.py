@@ -42,7 +42,74 @@ If : OS IF id CS Elems OS ENDIF CS
 
 Comment : OC text CC
 
+Exp : id
+    | Literal
+    | AExp
+    | RExp
+    | LExp
+    | '(' Exp ')'
+
+Literal : str
+        | Num
+        | Bool
+        | List   # '[' List ']'
+        | Tuple  # '(' List ')'
+        | Dict
+
+Num : int
+    | float
+
+Bool : TRUE
+     | FALSE
+
+List : '[' List1 ']'
+
+List1 : List1 ',' Exp
+      | Exp
+      | # fix this
+
+Tuple : '[' Tuple1 ']'
+
+Tuple1 : Tuple1 ',' Exp
+       | Exp
+       | # fix this
+
+Dict : '{' Dict1 '}'
+
+Dict1 : Dict1 ',' Key ':' Value
+      | Key ':' Value
+
+Key : str
+    | Num
+    | Tuple
+
+LExp : Exp OR  Exp
+     | Exp AND Exp
+     | NOT Exp
+
+RExp : Exp LOWER         Exp
+     | Exp LOWERQUALS    Exp
+     | Exp GREATER       Exp
+     | Exp GREATEREQUALS Exp
+     | Exp EQUALS        Exp
+     | Exp NOTEQUALS     Exp
+
+AExp : Exp ADD Exp
+     | Exp SUB Exp
+     | Exp MUL Exp
+     | Exp DIV Exp
+
+OExp : Exp IN Exp
+     | Exp IS Exp
+     | Exp '[' Exp ']'
+     | Exp '.' Exp
+
 """
+
+precedence = (
+    ('left', 'ADD', 'SUB'),
+    ('left', 'MUL', 'DIV'),
+)
 
 def p_Template(p):
     "Template : Elems"
@@ -77,13 +144,17 @@ def p_Code_Comment(p):
     "Code : Comment"
     p[0] = p[1]
 
-def p_Expression_str(p):
-    "Expression : OE str CE"
-    p[0] = ('text', p[2])
+def p_Expression(p):
+    "Expression : OE Exp CE"
+    p[0] = ('print', (*p[2], []))
 
-def p_Expression_id(p):
-    "Expression : OE id Ops CE"
-    p[0] = ('variable', p[2], p[3])
+# def p_Expression_str(p):
+#     "Expression : OE str CE"
+#     p[0] = ('text', p[2])
+# 
+# def p_Expression_id(p):
+#     "Expression : OE id Ops CE"
+#     p[0] = ('variable', p[2], p[3])
 
 def p_Ops_multiple(p):
     "Ops : Ops Op"
@@ -118,7 +189,7 @@ def p_Statement_for(p):
     p[0] = p[1]
 
 def p_If(p):
-    "If : OS IF id CS Elems OS ENDIF CS"
+    "If : OS IF Exp CS Elems OS ENDIF CS"
     p[0] = ('if', p[3], p[5])
 
 def p_If_is(p):
@@ -128,6 +199,46 @@ def p_If_is(p):
 def p_For(p):
     "For : OS FOR id IN id CS Elems OS ENDFOR CS"
     p[0] = ('for', p[3], p[5], p[7])
+
+def p_Exp_id(p):
+    "Exp : id"
+    p[0] = ('variable', p[1])
+
+def p_Exp_Num(p):
+    "Exp : Num"
+    p[0] = p[1]
+
+def p_Exp_AExp(p):
+    "Exp : AExp"
+    p[0] = p[1]
+
+def p_Exp_braces(p):
+    "Exp : '(' Exp ')'"
+    p[0] = p[2]
+
+def p_Num_int(p):
+    "Num : int"
+    p[0] = ('int', p[1])
+
+def p_Num_float(p):
+    "Num : float"
+    p[0] = ('float', p[1])
+
+def p_AExp_ADD(p):
+    "AExp : Exp ADD Exp"
+    p[0] = ('+', p[1], p[3])
+
+def p_AExp_SUB(p):
+    "AExp : Exp SUB Exp"
+    p[0] = ('-', p[1], p[3])
+
+def p_AExp_MUL(p):
+    "AExp : Exp MUL Exp"
+    p[0] = ('*', p[1], p[3])
+
+def p_AExp_DIV(p):
+    "AExp : Exp DIV Exp"
+    p[0] = ('/', p[1], p[3])
 
 # ! Should comments be ignored here or in the lexer?
 def p_Comment(p):
@@ -151,15 +262,58 @@ while True:
     if not s:
         continue
     result = parser.parse(s)
+
+    d = {
+        'a': [2,1,3],
+        'b': "abc",
+        'c': {'foo': 42, 'bar': 73},
+        'd': 42,
+    }
+
     print('ast:', result)
+    print('dict:', d)
+    print(run(result, d))
 
-    # d = {
-    #     'a': [2,1,3],
-    #     'b': "abc",
-    #     'c': {'foo': 42, 'bar': 73},
-    #     'd': 42,
-    # }
-
-    # print(d)
-    # run(result, d)
-    # print()
+# def p_Exp_RExp(p):
+#     "Exp : RExp"
+#     p[0] = ''
+# 
+# def p_Exp_LExp(p):
+#     "Exp : LExp"
+#     p[0] = ''
+# 
+# def p_RExp_LT(p):
+#     "RExp : Exp LT Exp" 
+#     p[0] = ''
+# 
+# def p_RExp_GT(p):
+#     "RExp : Exp GT Exp"
+#     p[0] = ''
+# 
+# def p_RExp_LTE(p):
+#     "RExp : Exp LTE Exp"
+#     p[0] = ''
+# 
+# def p_RExp_GTE(p):
+#     "RExp : Exp GTE Exp"
+#     p[0] = ''
+# 
+# def p_RExp_EQ(p):
+#     "RExp : Exp EQ Exp"
+#     p[0] = ''
+# 
+# def p_RExp_NEQ(p):
+#     "RExp : Exp NEQ Exp"
+#     p[0] = ''
+# 
+# def p_LExp_OR(p):
+#     "LExp : Exp OR Exp"
+#     p[0] = ''
+# 
+# def p_LExp_AND(p):
+#     "LExp : Exp AND Exp"
+#     p[0] = ''
+# 
+# def p_LExp_NOT(p):
+#     "LExp : NOT Exp"
+#     p[0] = ''
