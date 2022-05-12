@@ -40,6 +40,10 @@ def run(ast, dic):
                 out = run([x[1]], dic) * run([x[2]], dic)
             case '/':
                 out = run([x[1]], dic) / run([x[2]], dic)
+            case '==':
+                out = run([x[1]], dic) == run([x[2]], dic)
+            case '!=':
+                out = run([x[1]], dic) != run([x[2]], dic)
             case '<':
                 out = run([x[1]], dic) < run([x[2]], dic)
             case '>':
@@ -48,10 +52,20 @@ def run(ast, dic):
                 out = run([x[1]], dic) <= run([x[2]], dic)
             case '>=':
                 out = run([x[1]], dic) >= run([x[2]], dic)
-            case '==':
-                out = run([x[1]], dic) == run([x[2]], dic)
-            case '!=':
-                out = run([x[1]], dic) != run([x[2]], dic)
+            case 'is':
+                out = TESTS[x[2]](run([x[1]], dic))
+            case 'isnot':
+                out = not TESTS[x[2]](run([x[1]], dic))
+            case 'in':
+                out = run([x[1]], dic) in run([x[2]], dic)
+            case 'notin':
+                out = run([x[1]], dic) not in run([x[2]], dic)
+            case 'not':
+                out = not run([x[1]], dic)
+            case 'and':
+                out = run([x[1]], dic) and run([x[2]], dic)
+            case 'or':
+                out = run([x[1]], dic) or run([x[2]], dic)
             case _:
                 pass
     return out

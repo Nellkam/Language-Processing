@@ -1,15 +1,18 @@
 import ply.lex as lex
 
 reserved = {
+    'and': 'AND',
     'endfor': 'ENDFOR',
     'endif': 'ENDIF',
     'for': 'FOR',
     'if': 'IF',
     'in': 'IN',
     'is': 'IS',
+    'not': 'NOT',
+    'or': 'OR',
 }
 
-literals = ('|', '.', '[', ']')
+literals = ('|', '.', '(', ')', '[', ']')
 
 tokens = [
     'id',
@@ -19,7 +22,7 @@ tokens = [
     'text',
     'ADD', 'SUB', 'MUL', 'DIV',
     'NE', 'EQ', 'GT', 'GE', 'LT', 'LE',
-    'AND', 'OR', 'NOT',
+    'ISNOT', 'NOTIN',
     'OE', # Open  Expression {{
     'CE', # Close Expression }}
     'OS', # Open  Statement  {%
@@ -44,11 +47,16 @@ t_code_GT = '>'
 t_code_GE = '>='
 t_code_LT = '<'
 t_code_LE = '<='
-t_code_OR = 'or'
-t_code_AND = 'and'
-t_code_NOT = 'not'
 t_code_int = r'\d(?:_?\d+)*'
 t_code_float = r'\d(?:_?\d+)*\.\d+(?:e[+-]?\d+)?'
+
+def t_code_ISNOT(t):
+    r'is\s+not'
+    return t
+
+def t_code_NOTIN(t):
+    r'not\s+in'
+    return t
 
 def t_raw(t): # ! maybe integrate into the code and make raw a reserved word
     r'{%\s*raw\s*%}'
