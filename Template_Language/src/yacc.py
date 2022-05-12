@@ -1,5 +1,6 @@
 import ply.yacc as yacc
 from run import run
+import sys
 
 from lex import tokens, literals
 
@@ -309,30 +310,35 @@ def p_error(p):
 # Build the parser
 parser = yacc.yacc()
 
-import readline
+def main():
+    import readline
 
-while True:
-    try:
-        s = input('template > ')
-    except EOFError:
-        break
-    if not s:
-        continue
-    result = parser.parse(s)
+    while True:
+        try:
+            s = input('template > ')
+        except EOFError:
+            break
+        if not s:
+            continue
+        result = parser.parse(s)
 
-    class MyClass:
-        x = 5
-    
-    p1 = MyClass()
+        class MyClass:
+            x = 5
 
-    d = {
-        'a': [2,1,3],
-        'b': "abc",
-        'c': {'foo': 42, 'bar': 73},
-        'd': 42,
-        'e': p1,
-    }
+        p1 = MyClass()
 
-    print('dict:', d)
-    print('ast:', result)
-    print(run(result, d))
+        d = {
+            'a': [2,1,3],
+            'b': "abc",
+            'c': {'foo': 42, 'bar': 73},
+            'd': 42,
+            'e': p1,
+        }
+
+        print('dict:', d)
+        print('ast:', result)
+        print(run(result, d))
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,4 +1,5 @@
 import ply.lex as lex
+import sys
 
 reserved = {
     'and': 'AND',
@@ -148,20 +149,24 @@ def t_ANY_error(t):
 
 lexer = lex.lex()
 
-# import readline
-# 
-# while True:
-#     try:
-#         #s = input('template > ')
-#         s = input()
-#     except EOFError:
-#         break
-#     if not s:
-#         continue
-#     
-#     lexer.input(s)   # Give input to lexer
-#     while True:         # Tokenize
-#         tok = lexer.token()
-#         if not tok: 
-#             break       # No more input
-#         print(tok)
+def main():
+    import readline
+
+    while True:
+        try:
+            #s = input('template > ')
+            s = input()
+        except EOFError:
+            break
+        if not s:
+            continue
+        
+        lexer.input(s)   # Give input to lexer
+        while True:         # Tokenize
+            tok = lexer.token()
+            if not tok: 
+                break       # No more input
+            print(tok)
+
+if __name__ == "__main__":
+    sys.exit(main())
