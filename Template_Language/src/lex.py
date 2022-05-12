@@ -1,21 +1,29 @@
 import ply.lex as lex
 
 reserved = {
+    'and': 'AND',
     'endfor': 'ENDFOR',
     'endif': 'ENDIF',
     'for': 'FOR',
     'if': 'IF',
     'in': 'IN',
     'is': 'IS',
+    'not': 'NOT',
+    'or': 'OR',
 }
 
-literals = ('|', '.', '[', ']')
+literals = ('|', '.', '(', ')', '[', ']')
 
 tokens = [
     'id',
     'int',
+    'float',
     'str',
     'text',
+    'ADD', 'SUB', 'MUL', 'DIV',
+    'NE', 'EQ', 'GT', 'GE', 'LT', 'LE',
+    'ISNOT', 'NOTIN',
+    'PIPE', 'DOT',
     'OE', # Open  Expression {{
     'CE', # Close Expression }}
     'OS', # Open  Statement  {%
@@ -30,7 +38,30 @@ states = (
    ('raw', 'exclusive'),
 )
 
-def t_raw(t):
+t_code_ADD = '\+'
+t_code_SUB = '-'
+t_code_MUL = '\*'
+t_code_DIV = '/'
+t_code_EQ = '=='
+t_code_NE = '!='
+t_code_GT = '>'
+t_code_GE = '>='
+t_code_LT = '<'
+t_code_LE = '<='
+t_code_PIPE = '\|'
+t_code_DOT = '\.'
+t_code_int = r'\d(?:_?\d+)*'
+t_code_float = r'\d(?:_?\d+)*\.\d+(?:e[+-]?\d+)?'
+
+def t_code_ISNOT(t):
+    r'is\s+not'
+    return t
+
+def t_code_NOTIN(t):
+    r'not\s+in'
+    return t
+
+def t_raw(t): # ! maybe integrate into the code and make raw a reserved word
     r'{%\s*raw\s*%}'
     t.lexer.begin('raw')
 
@@ -45,7 +76,7 @@ def t_code_str(t): # ! lookahead/behind might not be the best way to go as it re
           (?=")                 # Positive lookahead for double quote
         |
           (?<=')                # Positive lookbehind for double quote
-            (?:\\.|[^"\\])*     # Single quoted strings
+            (?:\\.|[^'\\])*     # Single quoted strings
           (?=')                 # Positive lookbehind for double quote
         )
     '''
@@ -54,10 +85,6 @@ def t_code_str(t): # ! lookahead/behind might not be the best way to go as it re
 def t_code_id(t):
     r'[a-zA-Z_]\w*'
     t.type = reserved.get(t.value, 'id')    # Check for reserved words
-    return t
-
-def t_code_int(t):
-    r'\d+'
     return t
 
 def t_OE(t):
