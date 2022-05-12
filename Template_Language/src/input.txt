@@ -1,4 +1,0 @@
-foo
-{{for a in as}}
-bar
-foobar

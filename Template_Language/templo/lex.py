@@ -149,7 +149,7 @@ def t_ANY_error(t):
 
 lexer = lex.lex()
 
-def main():
+def main(argv):
     import readline
 
     while True:
@@ -169,4 +169,4 @@ def main():
             print(tok)
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv))

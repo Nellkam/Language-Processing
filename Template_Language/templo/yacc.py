@@ -310,7 +310,7 @@ def p_error(p):
 # Build the parser
 parser = yacc.yacc()
 
-def main():
+def main(argv):
     import readline
 
     while True:
@@ -341,4 +341,4 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv))
