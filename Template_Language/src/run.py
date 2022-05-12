@@ -18,6 +18,8 @@ def run(ast, dic):
                     out +=  run(x[3], dic)
             case 'int':
                 out = int(x[1])
+            case 'float':
+                out = float(x[1])
             case 'variable':
                 out = dic[x[1]]
             case '+':
