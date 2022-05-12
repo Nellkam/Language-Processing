@@ -198,7 +198,7 @@ def p_For(p):
 
 def p_Exp_id(p):
     "Exp : id"
-    p[0] = ('variable', p[1], [])
+    p[0] = ('variable', p[1])
 
 def p_Exp_Literal(p):
     "Exp : Literal"
@@ -214,6 +214,10 @@ def p_Exp_RExp(p):
 
 def p_Exp_LExp(p):
     "Exp : LExp"
+    p[0] = p[1]
+
+def p_Exp_OExp(p):
+    "Exp : OExp"
     p[0] = p[1]
 
 def p_Exp_braces(p):
@@ -292,6 +296,14 @@ def p_RExp_NOT_IN(p):
     "RExp : Exp NOTIN Exp"
     p[0] = ('notin', p[1], p[3])
 
+def p_OExp_filter(p):
+    "OExp : Exp PIPE id"
+    p[0] = ('filter', p[1], p[3])
+
+def p_OExp_method(p):
+    "OExp : Exp DOT id '(' ')'"
+    p[0] = ('method', p[1], p[3])
+
 def p_LExp_NOT(p):
     "LExp : NOT Exp"
     p[0] = ('not', p[2])
@@ -317,23 +329,25 @@ def p_error(p):
 parser = yacc.yacc()
 
 import readline
+import sys
 
-while True:
-    try:
-        s = input('template > ')
-    except EOFError:
-        break
-    if not s:
-        continue
-    result = parser.parse(s)
+#while True:
+    #try:
+    #    s = input('template > ')
+    #except EOFError:
+    #    break
+    #if not s:
+    #    continue
+    #result = parser.parse(s)
+result = parser.parse(sys.stdin.read())
 
-    d = {
-        'a': [2,1,3],
-        'b': "abc",
-        'c': {'foo': 42, 'bar': 73},
-        'd': 42,
-    }
+d = {
+    'a': [2,1,3],
+    'b': "abc",
+    'c': {'foo': 42, 'bar': 73},
+    'd': 42,
+}
 
-    print('dict:', d)
-    print('ast:', result)
-    print(run(result, d))
+print('dict:', d)
+print('ast:', result)
+print(run(result, d))

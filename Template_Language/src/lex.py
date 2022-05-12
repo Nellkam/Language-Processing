@@ -23,6 +23,7 @@ tokens = [
     'ADD', 'SUB', 'MUL', 'DIV',
     'NE', 'EQ', 'GT', 'GE', 'LT', 'LE',
     'ISNOT', 'NOTIN',
+    'PIPE', 'DOT',
     'OE', # Open  Expression {{
     'CE', # Close Expression }}
     'OS', # Open  Statement  {%
@@ -47,6 +48,8 @@ t_code_GT = '>'
 t_code_GE = '>='
 t_code_LT = '<'
 t_code_LE = '<='
+t_code_PIPE = '\|'
+t_code_DOT = '\.'
 t_code_int = r'\d(?:_?\d+)*'
 t_code_float = r'\d(?:_?\d+)*\.\d+(?:e[+-]?\d+)?'
 
