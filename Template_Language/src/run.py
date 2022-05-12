@@ -12,9 +12,6 @@ def run(ast, dic):
             case 'if':
                 if run([x[1]], dic):
                     out += run(x[2], dic)
-            # case 'ifis':
-            #     if TESTS[x[2]](dic[x[1]]):
-            #         out += run(x[3], dic)
             case 'for':
                 for a in dic[x[2]]:
                     dic[x[1]] = a
@@ -71,6 +68,10 @@ def run(ast, dic):
                 out = getattr(builtins, x[2])(run([x[1]], dic))
             case 'method':
                 out = getattr(run([x[1]], dic), x[2])() # ! should var be assigned to this? (if the method returns a value instead of applying to var then it makes a difference) test in jinja
+            case 'item':             # ! Jinja deals with this differently, might need to use try, except statements
+                out = run([x[1]], dic).__getitem__(run([x[2]], dic))
+            case 'attr':
+                out = getattr(run([x[1]], dic), x[2]) # ! i don't think this makes comment makes sense anymore -> should var be assigned to this? (if the method returns a value instead of applying to var then it makes a difference) test in jinja
             case _:
                 pass
     return out

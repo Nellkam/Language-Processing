@@ -76,7 +76,7 @@ def t_code_str(t): # ! lookahead/behind might not be the best way to go as it re
           (?=")                 # Positive lookahead for double quote
         |
           (?<=')                # Positive lookbehind for double quote
-            (?:\\.|[^"\\])*     # Single quoted strings
+            (?:\\.|[^'\\])*     # Single quoted strings
           (?=')                 # Positive lookbehind for double quote
         )
     '''

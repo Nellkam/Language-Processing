@@ -296,14 +296,6 @@ def p_RExp_NOT_IN(p):
     "RExp : Exp NOTIN Exp"
     p[0] = ('notin', p[1], p[3])
 
-def p_OExp_filter(p):
-    "OExp : Exp PIPE id"
-    p[0] = ('filter', p[1], p[3])
-
-def p_OExp_method(p):
-    "OExp : Exp DOT id '(' ')'"
-    p[0] = ('method', p[1], p[3])
-
 def p_LExp_NOT(p):
     "LExp : NOT Exp"
     p[0] = ('not', p[2])
@@ -315,6 +307,22 @@ def p_LExp_AND(p):
 def p_LExp_OR(p):
     "LExp : Exp OR Exp"
     p[0] = ('or', p[1], p[3])
+
+def p_OExp_filter(p):
+    "OExp : Exp PIPE id"
+    p[0] = ('filter', p[1], p[3])
+
+def p_OExp_method(p):
+    "OExp : Exp DOT id '(' ')'"
+    p[0] = ('method', p[1], p[3])
+
+def p_OExp_attr(p):
+    "OExp : Exp DOT id"
+    p[0] = ('attr', p[1], p[3])
+
+def p_OExp_item(p):
+    "OExp : Exp '[' Exp ']'"
+    p[0] = ('item', p[1], p[3])
 
 # ! Should comments be ignored here or in the lexer?
 def p_Comment(p):
@@ -331,23 +339,28 @@ parser = yacc.yacc()
 import readline
 import sys
 
-#while True:
-    #try:
-    #    s = input('template > ')
-    #except EOFError:
-    #    break
-    #if not s:
-    #    continue
-    #result = parser.parse(s)
-result = parser.parse(sys.stdin.read())
+while True:
+    try:
+        s = input('template > ')
+    except EOFError:
+        break
+    if not s:
+        continue
+    result = parser.parse(s)
 
-d = {
-    'a': [2,1,3],
-    'b': "abc",
-    'c': {'foo': 42, 'bar': 73},
-    'd': 42,
-}
+    class MyClass:
+        x = 5
+    
+    p1 = MyClass()
 
-print('dict:', d)
-print('ast:', result)
-print(run(result, d))
+    d = {
+        'a': [2,1,3],
+        'b': "abc",
+        'c': {'foo': 42, 'bar': 73},
+        'd': 42,
+        'e': p1,
+    }
+
+    print('dict:', d)
+    print('ast:', result)
+    print(run(result, d))

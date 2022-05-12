@@ -1,0 +1,11 @@
+ 1>foo
+ 2>
+ 3>{{ d }}
+ 4>
+ 5>{% for x in a %}
+ 6>    {% if x is even %}
+ 7>        x: {{x}},
+ 8>    {% endif %}
+ 9>{% endfor %}
+10>
+11>bar
