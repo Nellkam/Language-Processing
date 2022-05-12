@@ -101,8 +101,11 @@ AExp : Exp ADD Exp
 
 OExp : Exp IN Exp
      | Exp IS Exp
+     | Exp NOTIN Exp
+     | Exp ISNOT Exp
      | Exp '[' Exp ']'
-     | Exp '.' Exp
+     | Exp '.' id
+     | Exp '|' id
 
 """
 
@@ -143,42 +146,13 @@ def p_Code_Statement(p):
     "Code : Statement"
     p[0] = p[1]
 
-# ! Should comments be ignored here or in the lexer?
-def p_Code_Comment(p):
+def p_Code_Comment(p): # ! Should comments be ignored here or in the lexer?
     "Code : Comment"
     p[0] = p[1]
 
 def p_Expression(p):
     "Expression : OE Exp CE"
     p[0] = ('print', (p[2]))
-
-# def p_Expression_id(p):
-#     "Expression : OE id Ops CE"
-#     p[0] = ('variable', p[2], p[3])
-# 
-# def p_Ops_multiple(p):
-#     "Ops : Ops Op"
-#     p[0] = p[1] + [p[2]]
-# 
-# def p_Ops_empty(p):
-#     "Ops : "
-#     p[0] = []
-# 
-# def p_Op_Filter(p):
-#     "Op : '|' id"
-#     p[0] = ('filter', p[2])
-# 
-# def p_Op_Item_str(p):
-#     "Op : '[' str ']'"
-#     p[0] = ('item', p[2])
-# 
-# def p_Op_Item_int(p):
-#     "Op : '[' int ']'"
-#     p[0] = ('item', int(p[2])) # ! Probably remove cast
-# 
-# def p_Op_Attr(p):
-#     "Op : '.' id"
-#     p[0] = ('attr', p[2])
 
 def p_Statement_if(p):
     "Statement : If"
@@ -324,8 +298,7 @@ def p_OExp_item(p):
     "OExp : Exp '[' Exp ']'"
     p[0] = ('item', p[1], p[3])
 
-# ! Should comments be ignored here or in the lexer?
-def p_Comment(p):
+def p_Comment(p): # ! Should comments be ignored here or in the lexer?
     "Comment : OC text CC"
     p[0] = '',
 
@@ -337,7 +310,6 @@ def p_error(p):
 parser = yacc.yacc()
 
 import readline
-import sys
 
 while True:
     try:
