@@ -208,23 +208,11 @@ def p_Exp_Literal(p):
     p[0] = p[1]
 
 
-def p_Exp_AExp(p):
-    "Exp : AExp"
-    p[0] = p[1]
-
-
-def p_Exp_RExp(p):
-    "Exp : RExp"
-    p[0] = p[1]
-
-
-def p_Exp_LExp(p):
-    "Exp : LExp"
-    p[0] = p[1]
-
-
-def p_Exp_OExp(p):
-    "Exp : OExp"
+def p_Exp_types(p):
+    """Exp : AExp
+       Exp : RExp
+       Exp : LExp
+       Exp : OExp"""
     p[0] = p[1]
 
 
@@ -268,39 +256,15 @@ def p_Bool_FALSE(p):
     p[0] = ("bool", p[1])
 
 
-def p_AExp_ADD(p):
-    "AExp : Exp ADD Exp"
-    p[0] = ("+", p[1], p[3])
-
-
-def p_AExp_SUB(p):
-    "AExp : Exp SUB Exp"
-    p[0] = ("-", p[1], p[3])
-
-
-def p_AExp_MUL(p):
-    "AExp : Exp MUL Exp"
-    p[0] = ("*", p[1], p[3])
-
-
-def p_AExp_DIV(p):
-    "AExp : Exp DIV Exp"
-    p[0] = ("/", p[1], p[3])
-
-
-def p_AExp_FDIV(p):
-    "AExp : Exp FDIV Exp"
-    p[0] = ("//", p[1], p[3])
-
-
-def p_AExp_RMD(p):
-    "AExp : Exp RMD Exp"
-    p[0] = ("%", p[1], p[3])
-
-
-def p_AExp_EXPO(p):
-    "AExp : Exp EXPO Exp"
-    p[0] = ("**", p[1], p[3])
+def p_AExp_bin(p):
+    """AExp : Exp ADD Exp
+            | Exp SUB Exp
+            | Exp MUL Exp
+            | Exp DIV Exp
+            | Exp FDIV Exp
+            | Exp RMD Exp
+            | Exp EXPO Exp"""
+    p[0] = (p[2], p[1], p[3])
 
 
 def p_AExp_UMINUS(p):
@@ -313,54 +277,26 @@ def p_AExp_UPLUS(p):
     p[0] = ("uplus", p[2])
 
 
-def p_RExp_EQ(p):
-    "RExp : Exp EQ Exp"
-    p[0] = ("==", p[1], p[3])
+def p_RExp_bin(p):
+    """RExp : Exp EQ Exp
+            | Exp NE Exp
+            | Exp GT Exp
+            | Exp GE Exp
+            | Exp LT Exp
+            | Exp LE Exp
+            | Exp IS id
+            | Exp IN Exp"""
+    p[0] = (p[2], p[1], p[3])
 
 
-def p_RExp_NEQ(p):
-    "RExp : Exp NE Exp"
-    p[0] = ("!=", p[1], p[3])
-
-
-def p_RExp_GT(p):
-    "RExp : Exp GT Exp"
-    p[0] = (">", p[1], p[3])
-
-
-def p_RExp_GE(p):
-    "RExp : Exp GE Exp"
-    p[0] = (">=", p[1], p[3])
-
-
-def p_RExp_LT(p):
-    "RExp : Exp LT Exp"
-    p[0] = ("<", p[1], p[3])
-
-
-def p_RExp_LE(p):
-    "RExp : Exp LE Exp"
-    p[0] = ("<=", p[1], p[3])
-
-
-def p_RExp_IS(p):
-    "RExp : Exp IS id"
-    p[0] = ("is", p[1], p[3])
-
-
-def p_RExp_IS_NOT(p):
+def p_RExp_NOTIN(p):
     "RExp : Exp ISNOT id"
-    p[0] = ("isnot", p[1], p[3])
+    p[0] = ('isnot', p[1], p[3])
 
 
-def p_RExp_IN(p):
-    "RExp : Exp IN Exp"
-    p[0] = ("in", p[1], p[3])
-
-
-def p_RExp_NOT_IN(p):
+def p_RExp_ISNOT(p):
     "RExp : Exp NOTIN Exp"
-    p[0] = ("notin", p[1], p[3])
+    p[0] = ('notin', p[1], p[3])
 
 
 def p_LExp_NOT(p):
