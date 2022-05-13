@@ -1,4 +1,3 @@
-
 """Built-in template tests used with the ``is`` operator."""
 import operator
 import typing as t
@@ -7,7 +6,7 @@ from numbers import Number
 
 # from .runtime import Undefined
 # from .utils import pass_environment
-# 
+#
 # if t.TYPE_CHECKING:
 #     from .environment import Environment
 
@@ -39,13 +38,13 @@ def test_divisibleby(value: int, num: int) -> bool:
 #     variables.
 #     """
 #     return not isinstance(value, Undefined)
-# 
-# 
+#
+#
 # def test_undefined(value: t.Any) -> bool:
 #     """Like :func:`defined` but the other way round."""
 #     return isinstance(value, Undefined)
-# 
-# 
+#
+#
 # @pass_environment
 # def test_filter(env: "Environment", value: str) -> bool:
 #     """Check if a filter exists by name. Useful if a filter may be
@@ -59,8 +58,8 @@ def test_divisibleby(value: int, num: int) -> bool:
 #     .. versionadded:: 3.0
 #     """
 #     return value in env.filters
-# 
-# 
+#
+#
 # @pass_environment
 # def test_test(env: "Environment", value: str) -> bool:
 #     """Check if a test exists by name. Useful if a test may be
@@ -189,9 +188,7 @@ def test_escaped(value: t.Any) -> bool:
 
 
 def test_in(value: t.Any, seq: t.Container) -> bool:
-    """Check if value is in seq.
-    .. versionadded:: 2.10
-    """
+    """Check if value is in seq."""
     return value in seq
 
 
