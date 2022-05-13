@@ -63,8 +63,8 @@ t_code_LT = "<"
 t_code_LE = "<="
 t_code_PIPE = "\|"
 t_code_DOT = "\."
-t_code_int = r"\d(?:_?\d+)*"
-t_code_float = r"\d(?:_?\d+)*\.\d+(?:e[+-]?\d+)?"
+t_code_int = r"[+-]?\d(?:_?\d+)*"
+t_code_float = r"[+-]?\d(?:_?\d+)*\.\d+(?:e[+-]?\d+)?"
 
 
 def t_code_ISNOT(t):
@@ -90,14 +90,11 @@ def t_end_raw(t):
 def t_code_str(
     t,
 ):  # ! lookahead/behind might not be the best way to go as it requeries ignoring quotes
-    r"""(
-      (?<=")                # Positive lookbehind for double quote
-        (?:\\.|[^"\\])*     # Double quoted strings
-      (?=")                 # Positive lookahead for double quote
+    r"""
+    (
+      "(?:\\.|[^"\\])*"     # Double quoted strings
     |
-      (?<=')                # Positive lookbehind for double quote
-        (?:\\.|[^'\\])*     # Single quoted strings
-      (?=')                 # Positive lookbehind for double quote
+      '(?:\\.|[^'\\])*'     # Single quoted strings
     )
     """
     return t
@@ -146,7 +143,8 @@ def t_comment_CC(t):  # ! Just ignore comments?
 
 
 def t_comment_text(t):
-    r"""(?s)        # Make the '.' special character match any character at all, including a newline
+    r"""
+    (?s)        # Make the '.' special character match any character at all, including a newline
     .+?         # One or more characters, non-greedy
     (?=[#]})    # Positive lookahead assertion
     """
@@ -154,7 +152,8 @@ def t_comment_text(t):
 
 
 def t_INITIAL_raw_text(t):
-    r"""(?s)        # Make the '.' special character match any character at all, including a newline
+    r"""
+    (?s)        # Make the '.' special character match any character at all, including a newline
     .+?         # One or more characters, non-greedy
     (?=         # Positive lookahead assertion
       {{|       # Expressions
@@ -171,7 +170,7 @@ def t_newline(t):
     t.lexer.lineno += len(t.value)
 
 
-t_code_ignore = " \t\"'"  # ! Deal with " to fix lookahead/behind differently
+t_code_ignore = " \t"  # ! Deal with " to fix lookahead/behind differently
 
 
 def t_ANY_error(t):
@@ -187,8 +186,7 @@ def main(argv):
 
     while True:
         try:
-            # s = input('template > ')
-            s = input()
+            s = input("template > ")
         except EOFError:
             break
         if not s:

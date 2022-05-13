@@ -1,8 +1,7 @@
 import ply.yacc as yacc
-from run import run
 import sys
-
 from lex import tokens, literals
+from run import run
 
 """
 Template : Elems
@@ -114,7 +113,7 @@ precedence = (
     ("left", "OR"),
     ("left", "AND"),
     ("left", "NOT"),
-    (
+    (   # Nonassociative operators
         "nonassoc",
         "EQ",
         "NE",
@@ -126,10 +125,10 @@ precedence = (
         "IN",
         "ISNOT",
         "NOTIN",
-    ),  # Nonassociative operators
+    ),
     ("left", "ADD", "SUB"),
     ("left", "MUL", "DIV"),
-    ("right", "UMINUS"),
+    ("right", "UMINUS", "UPLUS"),
 )
 
 
@@ -235,7 +234,7 @@ def p_Exp_braces(p):
 
 def p_Literal_str(p):
     "Literal : str"
-    p[0] = ("text", p[1])
+    p[0] = ("text", p[1][1:][:-1])
 
 
 def p_Literal_Num(p):
@@ -291,6 +290,11 @@ def p_AExp_DIV(p):
 def p_AExp_UMINUS(p):
     "AExp : SUB Exp %prec UMINUS"
     p[0] = ("uminus", p[2])
+
+
+def p_AExp_UPLUS(p):
+    "AExp : ADD Exp %prec UPLUS"
+    p[0] = ("uplus", p[2])
 
 
 def p_RExp_EQ(p):

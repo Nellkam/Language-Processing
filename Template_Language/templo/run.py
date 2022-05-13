@@ -11,9 +11,8 @@ def run(ast, dic):
             case "text":
                 out += x[1]
             case "print":
-                out += str(
-                    run([x[1]], dic)
-                )  # ! Should x[1] be a singleton or should something be restructured?
+                # ! Should x[1] be a singleton or should something be restructured?
+                out += str(run([x[1]], dic))  
             case "if":
                 if run([x[1]], dic):
                     out += run(x[2], dic)
@@ -26,39 +25,32 @@ def run(ast, dic):
             case "float":
                 out = float(x[1])
             case "bool":
-                out = bool(x[1])
+                out = x[1] == "True"
             case "variable":
                 out = dic[x[1]]
-            case "+" | "-" | "*" | "/" | "==" | "!=" | ">" | ">=" | "<" | "<=":
+            case "+" | "-" | "*" | "/" | "==" | "!=" | ">" | ">=" | "<" | "<=" | "in" | "notin" | "and" | "or":
                 out = OPERATORS[x[0]](run([x[1]], dic), run([x[2]], dic))
+            case "uplus":
+                out = +run([x[1]], dic)
             case "uminus":
                 out = -run([x[1]], dic)
             case "is":
                 out = TESTS[x[2]](run([x[1]], dic))
             case "isnot":
                 out = not TESTS[x[2]](run([x[1]], dic))
-            case "in":
-                out = run([x[1]], dic) in run([x[2]], dic)
-            case "notin":
-                out = run([x[1]], dic) not in run([x[2]], dic)
             case "not":
                 out = not run([x[1]], dic)
-            case "and":
-                out = run([x[1]], dic) and run([x[2]], dic)
-            case "or":
-                out = run([x[1]], dic) or run([x[2]], dic)
             case "filter":
                 out = getattr(builtins, x[2])(run([x[1]], dic))
             case "method":
-                out = getattr(
-                    run([x[1]], dic), x[2]
-                )()  # ! should var be assigned to this? (if the method returns a value instead of applying to var then it makes a difference) test in jinja
-            case "item":  # ! Jinja deals with this differently, might need to use try, except statements
+                # ! should var be assigned to this? (if the method returns a value instead of applying to var then it makes a difference) test in jinja
+                out = getattr(run([x[1]], dic), x[2])()  
+            case "item":  
+                # ! Jinja deals with this differently, might need to use try, except statements
                 out = run([x[1]], dic).__getitem__(run([x[2]], dic))
             case "attr":
-                out = getattr(
-                    run([x[1]], dic), x[2]
-                )  # ! i don't think this makes comment makes sense anymore -> should var be assigned to this? (if the method returns a value instead of applying to var then it makes a difference) test in jinja
+                # ! i don't think this makes comment makes sense anymore -> should var be assigned to this? (if the method returns a value instead of applying to var then it makes a difference) test in jinja
+                out = getattr(run([x[1]], dic), x[2])  
             case _:
                 pass
     return out
@@ -75,4 +67,8 @@ OPERATORS = {
     ">=": operator.ge,
     "<": operator.lt,
     "<=": operator.le,
+    "in": lambda x, y: operator.contains(y, x),
+    "notin": lambda x, y: not operator.contains(y, x),
+    "and": lambda x, y: x and y,
+    "or": lambda x, y: x or y,
 }
