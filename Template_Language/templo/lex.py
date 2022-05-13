@@ -3,6 +3,8 @@ import sys
 
 reserved = {
     "and": "AND",
+    "elif": "ELIF",
+    "else": "ELSE",
     "endfor": "ENDFOR",
     "endif": "ENDIF",
     "for": "FOR",
@@ -29,7 +31,7 @@ tokens = [
     "DIV",
     "FDIV",
     "RMD",
-    "EXPO",
+    "POW",
     "NE",
     "EQ",
     "GT",
@@ -60,7 +62,7 @@ t_code_MUL = "\*"
 t_code_DIV = "/"
 t_code_FDIV = "//"
 t_code_RMD = "%"
-t_code_EXPO = "\*\*"
+t_code_POW = "\*\*"
 t_code_EQ = "=="
 t_code_NE = "!="
 t_code_GT = ">"

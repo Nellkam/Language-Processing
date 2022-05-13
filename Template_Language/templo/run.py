@@ -14,8 +14,10 @@ def run(ast, dic):
                 # ! Should x[1] be a singleton or should something be restructured?
                 out += str(run([x[1]], dic))  
             case "if":
-                if run([x[1]], dic):
-                    out += run(x[2], dic)
+                for cond, elems in x[1]:
+                    if run([cond], dic):
+                        out += run(elems, dic)
+                        break
             case "for":
                 for a in dic[x[2]]:
                     dic[x[1]] = a

@@ -16,29 +16,14 @@ Code : Expression
      | Statement
      | Comment
 
-Expression : OE str CE
-           | OE id Ops CE
-
-Ops : Ops Op
-    |
-
-Op : '|' id      # Filter
-   | '[' str ']'  # Item
-   | '.' id      # Attribute
+Expression : OE Exp CE
 
 Statement : For
           | If
 
-Filters : Filters '|' id
-        |
-
-Attributes : Attributes '.' id
-           |
-
 For : OS FOR id IN id CS Elems OS ENDFOR CS
 
 If : OS IF id CS Elems OS ENDIF CS
-   | OS IF id IS id CD Elems OS ENDIF CS
 
 Comment : OC text CC
 
@@ -83,6 +68,13 @@ Key : str
     | Num
     | Tuple
 
+AExp : Exp ADD Exp
+     | Exp SUB Exp
+     | Exp MUL Exp
+     | Exp DIV Exp
+     | Exp RMD Exp
+     | Exp POW Exp
+
 LExp : Exp OR  Exp
      | Exp AND Exp
      | NOT Exp
@@ -93,17 +85,12 @@ RExp : Exp LT Exp
      | Exp GE Exp
      | Exp EQ Exp
      | Exp NE Exp
-
-AExp : Exp ADD Exp
-     | Exp SUB Exp
-     | Exp MUL Exp
-     | Exp DIV Exp
-
-OExp : Exp IN Exp
      | Exp IS Exp
      | Exp NOTIN Exp
      | Exp ISNOT Exp
-     | Exp '[' Exp ']'
+     | Exp IN Exp
+
+OExp : Exp '[' Exp ']'
      | Exp '.' id
      | Exp '|' id
 
@@ -128,8 +115,10 @@ precedence = (
     ),
     ("left", "ADD", "SUB"),
     ("left", "MUL", "DIV", "FDIV", "RMD"),
-    ("left", "EXPO"),
+    ("left", "POW"),
     ("right", "UMINUS", "UPLUS"),
+    ("right", "OE", "OS", "OC"),
+    ("left", "CE", "CS", "CC"),
 )
 
 
@@ -190,7 +179,57 @@ def p_Statement_for(p):
 
 def p_If(p):
     "If : OS IF Exp CS Elems OS ENDIF CS"
-    p[0] = ("if", p[3], p[5])
+    p[0] = ('if', [(p[3], p[5])])
+
+
+def p_If_else(p):
+    "If : OS IF Exp CS Elems OS ELSE CS Elems OS ENDIF CS"
+    p[0] = ('if', [(p[3], p[5]), (('bool', 'True'), p[9])])
+
+
+def p_If_elifs(p):
+    "If : OS IF Exp CS Elems Elifs OS ENDIF CS"
+    p[0] = ('if', [(p[3], p[5])] + p[6])
+
+
+def p_If_elifs_else(p):
+    "If : OS IF Exp CS Elems Elifs OS ELSE CS Elems OS ENDIF CS"
+    p[0] = ('if', [(p[3], p[5])] + p[6] + [(('bool', 'True'), p[10])])
+
+
+def p_Elifs_multiple(p):
+    "Elifs : Elifs Elif"
+    p[0] = p[1] + [p[2]]
+
+
+def p_Elifs_single(p):
+    "Elifs : Elif"
+    p[0] = [p[1]]
+
+
+def p_Elif(p):
+    "Elif : OS ELIF Exp CS Elems"
+    p[0] = (p[3], p[5])
+
+
+# def p_If(p):
+#     "If : OS IF Exp CS Elems Elifs Else OS ENDIF CS"
+#     p[0] = ("if", [(p[3], p[5])] + p[6] + p[7])
+
+
+# def p_Elifs_empty(p):
+#     "Elifs : "
+#     p[0] = []
+
+
+# def p_Else(p):
+#     "Else : OS ELSE CS Elems"
+#     p[0] = [(('bool', 'True'), p[4])]
+
+
+# def p_Else_empty(p):
+#     "Else : "
+#     p[0] = []
 
 
 def p_For(p):
@@ -263,7 +302,7 @@ def p_AExp_bin(p):
             | Exp DIV Exp
             | Exp FDIV Exp
             | Exp RMD Exp
-            | Exp EXPO Exp"""
+            | Exp POW Exp"""
     p[0] = (p[2], p[1], p[3])
 
 
