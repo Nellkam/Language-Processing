@@ -207,6 +207,10 @@ def p_Literal_Num(p):
     "Literal : Num"
     p[0] = p[1]
 
+def p_Literal_Bool(p):
+    "Literal : Bool"
+    p[0] = p[1]
+
 def p_Num_int(p):
     "Num : int"
     p[0] = ('int', p[1])
@@ -214,6 +218,14 @@ def p_Num_int(p):
 def p_Num_float(p):
     "Num : float"
     p[0] = ('float', p[1])
+
+def p_Bool_TRUE(p):
+    "Bool : TRUE"
+    p[0] = ('bool', p[1])
+
+def p_Bool_FALSE(p):
+    "Bool : FALSE"
+    p[0] = ('bool', p[1])
 
 def p_AExp_ADD(p):
     "AExp : Exp ADD Exp"

@@ -11,6 +11,8 @@ reserved = {
     'is': 'IS',
     'not': 'NOT',
     'or': 'OR',
+    'True': 'TRUE',
+    'False': 'FALSE',
 }
 
 literals = ('|', '.', '(', ')', '[', ']')

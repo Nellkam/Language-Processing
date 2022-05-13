@@ -1,4 +1,6 @@
 import builtins
+import operator
+import typing as t
 from tests import TESTS
 
 def run(ast, dic):
@@ -20,28 +22,12 @@ def run(ast, dic):
                 out = int(x[1])
             case 'float':
                 out = float(x[1])
+            case 'bool':
+                out = bool(x[1])
             case 'variable':
                 out = dic[x[1]]
-            case '+':
-                out = run([x[1]], dic) + run([x[2]], dic)
-            case '-':
-                out = run([x[1]], dic) - run([x[2]], dic)
-            case '*':
-                out = run([x[1]], dic) * run([x[2]], dic)
-            case '/':
-                out = run([x[1]], dic) / run([x[2]], dic)
-            case '==':
-                out = run([x[1]], dic) == run([x[2]], dic)
-            case '!=':
-                out = run([x[1]], dic) != run([x[2]], dic)
-            case '<':
-                out = run([x[1]], dic) < run([x[2]], dic)
-            case '>':
-                out = run([x[1]], dic) > run([x[2]], dic)
-            case '<=':
-                out = run([x[1]], dic) <= run([x[2]], dic)
-            case '>=':
-                out = run([x[1]], dic) >= run([x[2]], dic)
+            case '+' | '-' | '*' | '/' | '==' | '!=' | '>' | '>=' | '<' | '<=':
+                out = OPERATORS[x[0]](run([x[1]], dic), run([x[2]], dic))
             case 'is':
                 out = TESTS[x[2]](run([x[1]], dic))
             case 'isnot':
@@ -67,3 +53,16 @@ def run(ast, dic):
             case _:
                 pass
     return out
+
+OPERATORS = {
+    "+": operator.add,
+    "-": operator.sub,
+    "*": operator.mul,
+    "/": operator.truediv,
+    "==": operator.eq,
+    "!=": operator.ne,
+    ">": operator.gt,
+    ">=": operator.ge,
+    "<": operator.lt,
+    "<=": operator.le,
+}
