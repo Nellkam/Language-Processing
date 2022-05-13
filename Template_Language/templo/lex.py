@@ -27,6 +27,9 @@ tokens = [
     "SUB",
     "MUL",
     "DIV",
+    "FDIV",
+    "RMD",
+    "EXPO",
     "NE",
     "EQ",
     "GT",
@@ -55,6 +58,9 @@ t_code_ADD = "\+"
 t_code_SUB = "-"
 t_code_MUL = "\*"
 t_code_DIV = "/"
+t_code_FDIV = "//"
+t_code_RMD = "%"
+t_code_EXPO = "\*\*"
 t_code_EQ = "=="
 t_code_NE = "!="
 t_code_GT = ">"

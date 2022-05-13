@@ -28,7 +28,7 @@ def run(ast, dic):
                 out = x[1] == "True"
             case "variable":
                 out = dic[x[1]]
-            case "+" | "-" | "*" | "/" | "==" | "!=" | ">" | ">=" | "<" | "<=" | "in" | "notin" | "and" | "or":
+            case "+" | "-" | "*" | "/" | "//" | "%" | "**" | "==" | "!=" | ">" | ">=" | "<" | "<=" | "in" | "notin" | "and" | "or":
                 out = OPERATORS[x[0]](run([x[1]], dic), run([x[2]], dic))
             case "uplus":
                 out = +run([x[1]], dic)
@@ -61,6 +61,9 @@ OPERATORS = {
     "-": operator.sub,
     "*": operator.mul,
     "/": operator.truediv,
+    "//": operator.floordiv,
+    "%": lambda x, y: x % y,
+    "**": lambda x, y: x ** y,
     "==": operator.eq,
     "!=": operator.ne,
     ">": operator.gt,

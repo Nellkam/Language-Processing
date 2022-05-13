@@ -127,7 +127,8 @@ precedence = (
         "NOTIN",
     ),
     ("left", "ADD", "SUB"),
-    ("left", "MUL", "DIV"),
+    ("left", "MUL", "DIV", "FDIV", "RMD"),
+    ("left", "EXPO"),
     ("right", "UMINUS", "UPLUS"),
 )
 
@@ -285,6 +286,21 @@ def p_AExp_MUL(p):
 def p_AExp_DIV(p):
     "AExp : Exp DIV Exp"
     p[0] = ("/", p[1], p[3])
+
+
+def p_AExp_FDIV(p):
+    "AExp : Exp FDIV Exp"
+    p[0] = ("//", p[1], p[3])
+
+
+def p_AExp_RMD(p):
+    "AExp : Exp RMD Exp"
+    p[0] = ("%", p[1], p[3])
+
+
+def p_AExp_EXPO(p):
+    "AExp : Exp EXPO Exp"
+    p[0] = ("**", p[1], p[3])
 
 
 def p_AExp_UMINUS(p):
