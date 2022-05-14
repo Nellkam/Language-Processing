@@ -24,6 +24,12 @@ def run(ast, dic):
                 for a in dic[x[2]]:
                     dic[x[1]] = a
                     out += run(x[3], dic)
+            case "fordict":
+                print(dic[x[3]])
+                for a, b in dic[x[3]].items(): # ! Easy clashes
+                    dic[x[1]] = a
+                    dic[x[2]] = b
+                    out += run(x[4], dic)
             case "repeat":
                 for _ in range(run([x[1]], dic)):
                     out += run(x[2], dic)

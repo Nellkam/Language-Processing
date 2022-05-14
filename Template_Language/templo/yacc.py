@@ -214,6 +214,11 @@ def p_For(p):
     p[0] = ("for", p[3], p[5], p[7])
 
 
+def p_For_dict(p):
+    "For : OS FOR id ',' id IN id CS Elems OS ENDFOR CS"
+    p[0] = ("fordict", p[3], p[5], p[7], p[9])
+
+
 def p_Repeat(p):
     "Repeat : OS REPEAT Exp CS Elems OS ENDREPEAT CS"
     p[0] = ("repeat", p[3], p[5])
