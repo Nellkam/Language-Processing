@@ -32,7 +32,7 @@ render(d)
 # returns 'Hello, simple world!'
 template("Hello,{% if answer == 42 %} simple {% else %} cruel {% endif %}world!", {'answer': 42})
 # returns 'Hello, simple world!'
-template("Hello,{% if answer == 42 %} simple {% else %} cruel {% endif %}world!", {'answer': 73})
+template("Hello,{% if answer == 42 %} cruel {% else %} cruel {% endif %}world!", {'answer': 73})
 ```
 
 ## Developing Templo
