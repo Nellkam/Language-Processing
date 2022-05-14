@@ -92,10 +92,10 @@ OPERATORS = {
 def template(template):
     ast = parser.parse(template)
 
-    def f(dic):
+    def _f(dic):
         return run(ast, dic)
 
-    return f
+    return _f
 
 
 def main(argv):

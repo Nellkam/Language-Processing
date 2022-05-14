@@ -151,10 +151,10 @@ def t_INITIAL_raw_text(t):
     (?s)        # Make the '.' special character match any character at all, including a newline
     .+?         # One or more characters, non-greedy
     (?=         # Positive lookahead assertion
-      {{|       # Expressions
-      {%|       # Statements
-      {[#]|     # Comments
-      \Z        # Matches only at the end of the string.
+      {{|       # Open Expressions
+      {%|       # Open Statements
+      {[#]|     # Open Comments
+      \Z        # Matches only at the end of the string
     )
     """
     return t
