@@ -2,8 +2,10 @@ import builtins
 import operator
 import sys
 import typing as t
-from .yacc import parser
-from .tests import TESTS
+import yaml
+from yaml import Loader
+from templo.yacc import parser
+from templo.tests import TESTS
 
 
 def run(ast, dic):
@@ -98,13 +100,20 @@ OPERATORS = {
 }
 
 
-def template(template):
-    ast = parser.parse(template)
+def template(tmpl, dic=None):
+    if type(tmpl) is not str:
+        tmpl = tmpl.read()
 
-    def _f(dic=None):
+    ast = parser.parse(tmpl)
+
+    if dic is None:
+        return lambda d=None: run(ast, d)
+    else:
+        if type(dic) is str:
+            dic = yaml.load(dic, Loader=Loader)
+        elif type(dic) is not dict:
+            dic = yaml.load(dic.read(), Loader=Loader)
         return run(ast, dic)
-
-    return _f
 
 
 def main(argv):

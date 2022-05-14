@@ -90,7 +90,7 @@ Args : Args ',' Exp
 
 import ply.yacc as yacc
 import sys
-from .lex import tokens, literals
+from templo.lex import tokens, literals
 from inspect import getdoc
 
 

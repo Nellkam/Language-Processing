@@ -18,6 +18,7 @@ ply==3.11
 pycparser==2.21
 Pygments==2.12.0
 pyparsing==3.0.9
+PyYAML==6.0
 readme-renderer==35.0
 requests==2.27.1
 requests-toolbelt==0.9.1
@@ -25,7 +26,7 @@ rfc3986==2.0.0
 rich==12.4.1
 SecretStorage==3.3.2
 six==1.16.0
--e git+ssh://git@github.com/Nellkam/Language-Processing.git@b95b76ddbc1cabeb6dba171afc6b6c9b27b3312f#egg=templo&subdirectory=Template_Language
+-e git+ssh://git@github.com/Nellkam/Language-Processing.git@a849182c31e6c0c94aae8c3b102e0aaf9dfb36e7#egg=templo&subdirectory=Template_Language
 tomli==2.0.1
 twine==4.0.0
 urllib3==1.26.9
