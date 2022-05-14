@@ -14,7 +14,6 @@ Elem : text
 
 Code : Expression
      | Statement
-     | Comment
 
 Expression : OE Exp CE
 
@@ -117,8 +116,7 @@ precedence = (
     ("left", "MUL", "DIV", "FDIV", "RMD"),
     ("left", "POW"),
     ("right", "UMINUS", "UPLUS"),
-    ("right", "OE", "OS", "OC"),
-    ("left", "CE", "CS", "CC"),
+    ("left", "CS"), # ! Is this correct?
 )
 
 
@@ -157,44 +155,44 @@ def p_Code_Statement(p):
     p[0] = p[1]
 
 
-def p_Code_Comment(p):  # ! Should comments be ignored here or in the lexer?
-    "Code : Comment"
-    p[0] = p[1]
-
-
 def p_Expression(p):
     "Expression : OE Exp CE"
     p[0] = ("print", (p[2]))
 
 
-def p_Statement_if(p):
+def p_Statement_If(p):
     "Statement : If"
     p[0] = p[1]
 
 
-def p_Statement_for(p):
+def p_Statement_For(p):
     "Statement : For"
+    p[0] = p[1]
+
+
+def p_Statement_Repeat(p):
+    "Statement : Repeat"
     p[0] = p[1]
 
 
 def p_If(p):
     "If : OS IF Exp CS Elems OS ENDIF CS"
-    p[0] = ('if', [(p[3], p[5])])
+    p[0] = ("if", [(p[3], p[5])])
 
 
 def p_If_else(p):
     "If : OS IF Exp CS Elems OS ELSE CS Elems OS ENDIF CS"
-    p[0] = ('if', [(p[3], p[5]), (('bool', 'True'), p[9])])
+    p[0] = ("if", [(p[3], p[5]), (("bool", "True"), p[9])])
 
 
 def p_If_elifs(p):
     "If : OS IF Exp CS Elems Elifs OS ENDIF CS"
-    p[0] = ('if', [(p[3], p[5])] + p[6])
+    p[0] = ("if", [(p[3], p[5])] + p[6])
 
 
 def p_If_elifs_else(p):
     "If : OS IF Exp CS Elems Elifs OS ELSE CS Elems OS ENDIF CS"
-    p[0] = ('if', [(p[3], p[5])] + p[6] + [(('bool', 'True'), p[10])])
+    p[0] = ("if", [(p[3], p[5])] + p[6] + [(("bool", "True"), p[10])])
 
 
 def p_Elifs_multiple(p):
@@ -212,29 +210,14 @@ def p_Elif(p):
     p[0] = (p[3], p[5])
 
 
-# def p_If(p):
-#     "If : OS IF Exp CS Elems Elifs Else OS ENDIF CS"
-#     p[0] = ("if", [(p[3], p[5])] + p[6] + p[7])
-
-
-# def p_Elifs_empty(p):
-#     "Elifs : "
-#     p[0] = []
-
-
-# def p_Else(p):
-#     "Else : OS ELSE CS Elems"
-#     p[0] = [(('bool', 'True'), p[4])]
-
-
-# def p_Else_empty(p):
-#     "Else : "
-#     p[0] = []
-
-
 def p_For(p):
     "For : OS FOR id IN id CS Elems OS ENDFOR CS"
     p[0] = ("for", p[3], p[5], p[7])
+
+
+def p_Repeat(p):
+    "Repeat : OS REPEAT Exp CS Elems OS ENDREPEAT CS"
+    p[0] = ("repeat", p[3], p[5])
 
 
 def p_Exp_id(p):
@@ -335,7 +318,7 @@ def p_RExp_NOTIN(p):
 
 def p_RExp_ISNOT(p):
     "RExp : Exp NOTIN Exp"
-    p[0] = ('notin', p[1], p[3])
+    p[0] = ("notin", p[1], p[3])
 
 
 def p_LExp_NOT(p):
@@ -371,11 +354,6 @@ def p_OExp_attr(p):
 def p_OExp_item(p):
     "OExp : Exp '[' Exp ']'"
     p[0] = ("item", p[1], p[3])
-
-
-def p_Comment(p):  # ! Should comments be ignored here or in the lexer?
-    "Comment : OC text CC"
-    p[0] = ("",)
 
 
 # Error rule for syntax errors

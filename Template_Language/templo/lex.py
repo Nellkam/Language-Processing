@@ -7,12 +7,14 @@ reserved = {
     "else": "ELSE",
     "endfor": "ENDFOR",
     "endif": "ENDIF",
+    "endrepeat": "ENDREPEAT",
     "for": "FOR",
     "if": "IF",
     "in": "IN",
     "is": "IS",
     "not": "NOT",
     "or": "OR",
+    "repeat": "REPEAT",
     "True": "TRUE",
     "False": "FALSE",
 }
@@ -46,13 +48,10 @@ tokens = [
     "CE",  # Close Expression }}
     "OS",  # Open  Statement  {%
     "CS",  # Close Statement  %}
-    "OC",  # Open  Comment    {#
-    "CC",  # Close Comment    #}
 ] + list(reserved.values())
 
 states = (
     ("code", "exclusive"),
-    ("comment", "exclusive"),
     ("raw", "exclusive"),
 )
 
@@ -84,8 +83,8 @@ def t_code_NOTIN(t):
     r"not\s+in"
     return t
 
-
-def t_raw(t):  # ! maybe integrate into the code and make raw a reserved word
+# ! maybe integrate into the code and make raw a reserved word
+def t_raw(t):
     r"{%\s*raw\s*%}"
     t.lexer.begin("raw")
 
@@ -94,10 +93,8 @@ def t_end_raw(t):
     r"{%\s*endraw\s*%}"
     t.lexer.begin("INITIAL")
 
-
-def t_code_str(
-    t,
-):  # ! lookahead/behind might not be the best way to go as it requeries ignoring quotes
+# ! lookahead/behind might not be the best way to go as it requeries ignoring quotes
+def t_code_str(t):  
     r"""
     (
       "(?:\\.|[^"\\])*"     # Double quoted strings
@@ -126,12 +123,6 @@ def t_OS(t):
     return t
 
 
-def t_OC(t):
-    r"{[#]"
-    t.lexer.begin("comment")
-    return t
-
-
 def t_code_CE(t):
     r"}}"
     t.lexer.begin("INITIAL")
@@ -144,19 +135,13 @@ def t_code_CS(t):
     return t
 
 
-def t_comment_CC(t):  # ! Just ignore comments?
-    r"[#]}"
-    t.lexer.begin("INITIAL")
-    return t
-
-
-def t_comment_text(t):
+def t_comment(t):
     r"""
-    (?s)        # Make the '.' special character match any character at all, including a newline
-    .+?         # One or more characters, non-greedy
-    (?=[#]})    # Positive lookahead assertion
+    (?s)    # Make the '.' special character match any character at all, including a newline
+    {[#]    # Open Comment
+    .+?     # One or more characters, non-greedy
+    [#]}    # Close Comment
     """
-    return t
 
 
 def t_INITIAL_raw_text(t):

@@ -22,6 +22,9 @@ def run(ast, dic):
                 for a in dic[x[2]]:
                     dic[x[1]] = a
                     out += run(x[3], dic)
+            case "repeat":
+                for _ in range(run([x[1]], dic)):
+                    out += run(x[2], dic)
             case "int":
                 out = int(x[1])
             case "float":
