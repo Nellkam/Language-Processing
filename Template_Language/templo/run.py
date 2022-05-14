@@ -2,8 +2,25 @@ import builtins
 import operator
 import sys
 import typing as t
-from yacc import parser
+from itertools import dropwhile
 from tests import TESTS
+from yacc import parser
+
+
+def clean(ast):
+    for i in range(len(ast)):
+        match ast[i][0]:
+            case ('-', ''):
+                if ast[i-1][0] == "text":
+                    text = ''.join(dropwhile(lambda x: x == ' ' or x == '\t', ast[i-1][1][::-1]))[::-1]
+                    ast[i-1] = ("text", text)
+                ast[i], *_ = ast[i][1:]
+            case ('', '-'):
+                if ast[i+1][0] == "text":
+                    text = ''.join(dropwhile(lambda x: x == ' ' or x == '\t', ast[i-1][1]))
+                    ast[i+1] = ("text", text)
+                ast[i], *_ = ast[i][1:]
+    return ast
 
 
 def run(ast, dic):
@@ -100,6 +117,8 @@ def template(template):
 
 def main(argv):
     import readline
+
+    # print(clean([('text', '   foo \n \t '), (('-', ''), ('print', ('int', '2'))), ('text', 'bar')]))
 
     while True:
         try:

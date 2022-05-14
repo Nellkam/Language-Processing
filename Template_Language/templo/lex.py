@@ -46,6 +46,8 @@ tokens = [
     "DOT",
     "OE",  # Open  Expression {{
     "CE",  # Close Expression }}
+    "OES",  # Open  Expression {{
+    "CES",  # Close Expression }}
     "OS",  # Open  Statement  {%
     "CS",  # Close Statement  %}
 ] + list(reserved.values())
@@ -119,6 +121,12 @@ def t_OE(t):
     return t
 
 
+def t_OES(t):
+    r"{{-"
+    t.lexer.begin("code")
+    return t
+
+
 def t_OS(t):
     r"{%"
     t.lexer.begin("code")
@@ -127,6 +135,12 @@ def t_OS(t):
 
 def t_code_CE(t):
     r"}}"
+    t.lexer.begin("INITIAL")
+    return t
+
+
+def t_code_CES(t):
+    r"-}}"
     t.lexer.begin("INITIAL")
     return t
 

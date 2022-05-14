@@ -156,7 +156,32 @@ def p_Code_Statement(p):
 
 def p_Expression(p):
     "Expression : OE Exp CE"
-    p[0] = ("print", (p[2]))
+    p[0] = ("print", p[2])
+
+
+# def p_Expression(p):
+#     "Expression : OpenE Exp CloseE"
+#     p[0] = (p[1], p[3]), ("print", (p[2]))
+# 
+# 
+# def p_OpenE_OE(p):
+#     "OpenE : OE"
+#     p[0] = ''
+# 
+# 
+# def p_CloseE_CE(p):
+#     "CloseE : CE"
+#     p[0] = ''
+# 
+# 
+# def p_OpenE_OES(p):
+#     "OpenE : OES"
+#     p[0] = '-'
+# 
+# 
+# def p_CloseE_CES(p):
+#     "CloseE : CES"
+#     p[0] = '-'
 
 
 def p_Statement_If(p):
