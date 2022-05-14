@@ -2,8 +2,8 @@ import builtins
 import operator
 import sys
 import typing as t
-from yacc import parser
-from tests import TESTS
+from .yacc import parser
+from .tests import TESTS
 
 
 def run(ast, dic):
@@ -33,6 +33,11 @@ def run(ast, dic):
             case "repeat":
                 for _ in range(run([x[1]], dic)):
                     out += run(x[2], dic)
+            case "variable":
+                try:
+                    out = dic.get(x[1], None)
+                except AttributeError:
+                    out = None
             case "int":
                 out = int(x[1])
             case "float":
@@ -43,8 +48,6 @@ def run(ast, dic):
                 out = list(map(lambda y: run([y], dic), x[1]))
             case "tuple":
                 out = tuple(map(lambda y: run([y], dic), x[1]))
-            case "variable":
-                out = dic[x[1]]
             case "+" | "-" | "*" | "/" | "//" | "%" | "**" | "==" | "!=" | ">" | ">=" | "<" | "<=" | "in" | "notin" | "and" | "or":
                 out = OPERATORS[x[0]](run([x[1]], dic), run([x[2]], dic))
             case "uplus":
@@ -98,7 +101,7 @@ OPERATORS = {
 def template(template):
     ast = parser.parse(template)
 
-    def _f(dic):
+    def _f(dic=None):
         return run(ast, dic)
 
     return _f
@@ -129,7 +132,7 @@ def main(argv):
 
         d = {
             "a": [2, 1, 3],
-            "b": "abc",
+            "b": "Diana",
             "c": {"foo": 42, "bar": 73},
             "d": 42,
             "e": p1,
