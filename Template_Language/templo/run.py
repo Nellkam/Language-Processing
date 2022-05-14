@@ -1,6 +1,8 @@
 import builtins
 import operator
+import sys
 import typing as t
+from yacc import parser
 from tests import TESTS
 
 
@@ -12,7 +14,7 @@ def run(ast, dic):
                 out += x[1]
             case "print":
                 # ! Should x[1] be a singleton or should something be restructured?
-                out += str(run([x[1]], dic))  
+                out += str(run([x[1]], dic))
             case "if":
                 for cond, elems in x[1]:
                     if run([cond], dic):
@@ -31,6 +33,10 @@ def run(ast, dic):
                 out = float(x[1])
             case "bool":
                 out = x[1] == "True"
+            case "list":
+                out = list(map(lambda y: run([y], dic), x[1]))
+            case "tuple":
+                out = tuple(map(lambda y: run([y], dic), x[1]))
             case "variable":
                 out = dic[x[1]]
             case "+" | "-" | "*" | "/" | "//" | "%" | "**" | "==" | "!=" | ">" | ">=" | "<" | "<=" | "in" | "notin" | "and" | "or":
@@ -47,15 +53,16 @@ def run(ast, dic):
                 out = not run([x[1]], dic)
             case "filter":
                 out = getattr(builtins, x[2])(run([x[1]], dic))
-            case "method":
-                # ! should var be assigned to this? (if the method returns a value instead of applying to var then it makes a difference) test in jinja
-                out = getattr(run([x[1]], dic), x[2])()  
-            case "item":  
+            case "item":
                 # ! Jinja deals with this differently, might need to use try, except statements
                 out = run([x[1]], dic).__getitem__(run([x[2]], dic))
             case "attr":
                 # ! i don't think this makes comment makes sense anymore -> should var be assigned to this? (if the method returns a value instead of applying to var then it makes a difference) test in jinja
-                out = getattr(run([x[1]], dic), x[2])  
+                out = getattr(run([x[1]], dic), x[2])
+            case "method":
+                # ! should var be assigned to this? (if the method returns a value instead of applying to var then it makes a difference) test in jinja
+                args = tuple(map(lambda y: run([y], dic), x[3]))
+                out = getattr(run([x[1]], dic), x[2])(*args)
             case _:
                 pass
     return out
@@ -68,7 +75,7 @@ OPERATORS = {
     "/": operator.truediv,
     "//": operator.floordiv,
     "%": lambda x, y: x % y,
-    "**": lambda x, y: x ** y,
+    "**": lambda x, y: x**y,
     "==": operator.eq,
     "!=": operator.ne,
     ">": operator.gt,
@@ -80,3 +87,48 @@ OPERATORS = {
     "and": lambda x, y: x and y,
     "or": lambda x, y: x or y,
 }
+
+def template(template):
+    ast = parser.parse(template)
+    def f(dic):
+        return run(ast, dic)
+    return f
+
+def main(argv):
+    import readline
+
+    while True:
+        try:
+            s = input("template > ")
+        except EOFError:
+            break
+        if not s:
+            continue
+        result = parser.parse(s)
+
+        class MyClass:
+            x = 5
+
+            def f(self, i, j, k):
+                return i * j - k + self.x
+            
+            def g(self):
+                return 9
+
+        p1 = MyClass()
+
+        d = {
+            "a": [2, 1, 3],
+            "b": "abc",
+            "c": {"foo": 42, "bar": 73},
+            "d": 42,
+            "e": p1,
+        }
+
+        print("dict:", d)
+        print("ast:", result)
+        print(run(result, d))
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

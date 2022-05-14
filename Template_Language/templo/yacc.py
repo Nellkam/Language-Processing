@@ -1,7 +1,92 @@
-import ply.yacc as yacc
-import sys
-from lex import tokens, literals
-from run import run
+"""
+Template : Elems
+
+Elems : Elems Elem
+      |
+
+Elem : text
+     | Code
+
+Code : Expression
+     | Statement
+
+Expression : OE Exp CE
+
+Statement : If
+          | For
+          | Repeat
+
+If : OS IF Exp CS Elems OS ENDIF CS
+   | OS IF Exp CS Elems OS ELSE CS Elems OS ENDIF CS
+   | OS IF Exp CS Elems Elifs OS ENDIF CS
+   | OS IF Exp CS Elems Elifs OS ELSE CS Elems OS ENDIF CS
+
+Elifs : Elifs Elif
+      | Elif
+
+Elif : OS ELIF Exp CS Elems
+
+For : OS FOR id IN id CS Elems OS ENDFOR CS
+
+Repeat : OS REPEAT Exp CS Elems OS ENDREPEAT CS
+
+Exp : id
+    | Literal
+    | AExp
+    | RExp
+    | LExp
+    | OExp
+    | '(' Exp ')'
+
+Literal : str
+        | Num
+        | Bool
+        | '[' List ']'
+
+List : List ',' Exp
+     | Exp
+     | 
+
+Num : int
+    | float
+
+Bool : TRUE
+     | FALSE
+
+AExp : Exp ADD Exp
+     | Exp SUB Exp
+     | Exp MUL Exp
+     | Exp DIV Exp
+     | Exp FDIV Exp
+     | Exp RMD Exp
+     | Exp POW Exp
+     | SUB Exp %prec UMINUS
+     | ADD Exp %prec UPLUS
+
+RExp : Exp EQ Exp
+     | Exp NE Exp
+     | Exp GT Exp
+     | Exp GE Exp
+     | Exp LT Exp
+     | Exp LE Exp
+     | Exp IS id
+     | Exp IN Exp
+     | Exp ISNOT id
+     | Exp NOTIN Exp
+
+LExp : NOT Exp
+     | Exp AND Exp
+     | Exp OR Exp
+
+OExp : Exp PIPE id
+     | Exp DOT id
+     | Exp '[' Exp ']'
+     | Exp DOT id '(' Args ')'
+
+Args : Args ',' Exp
+     | Exp
+     | 
+"""
 
 """
 Template : Elems
@@ -92,14 +177,18 @@ RExp : Exp LT Exp
 OExp : Exp '[' Exp ']'
      | Exp '.' id
      | Exp '|' id
-
 """
+import ply.yacc as yacc
+import sys
+from lex import tokens, literals
+from inspect import getdoc
+
 
 precedence = (
     ("left", "OR"),
     ("left", "AND"),
     ("left", "NOT"),
-    (   # Nonassociative operators
+    (  # Nonassociative operators
         "nonassoc",
         "EQ",
         "NE",
@@ -116,7 +205,7 @@ precedence = (
     ("left", "MUL", "DIV", "FDIV", "RMD"),
     ("left", "POW"),
     ("right", "UMINUS", "UPLUS"),
-    ("left", "CS"), # ! Is this correct?
+    ("left", "CS"),  # ! Is this correct?
 )
 
 
@@ -258,6 +347,31 @@ def p_Literal_Bool(p):
     p[0] = p[1]
 
 
+def p_Literal_List(p):
+    "Literal : '[' List ']'"
+    p[0] = ("list", p[2])
+
+
+# def p_Literal_Tuple(p):
+#     "Literal : '(' List ')'"
+#     p[0] = ("tuple", p[2])
+
+
+def p_List_multiple(p):
+    "List : List ',' Exp"
+    p[0] = p[1] + [p[3]]
+
+
+def p_List_single(p):
+    "List : Exp"
+    p[0] = [p[1]]
+
+
+def p_List_empty(p):
+    "List : "
+    p[0] = []
+
+
 def p_Num_int(p):
     "Num : int"
     p[0] = ("int", p[1])
@@ -313,7 +427,7 @@ def p_RExp_bin(p):
 
 def p_RExp_NOTIN(p):
     "RExp : Exp ISNOT id"
-    p[0] = ('isnot', p[1], p[3])
+    p[0] = ("isnot", p[1], p[3])
 
 
 def p_RExp_ISNOT(p):
@@ -341,11 +455,6 @@ def p_OExp_filter(p):
     p[0] = ("filter", p[1], p[3])
 
 
-def p_OExp_method(p):
-    "OExp : Exp DOT id '(' ')'"
-    p[0] = ("method", p[1], p[3])
-
-
 def p_OExp_attr(p):
     "OExp : Exp DOT id"
     p[0] = ("attr", p[1], p[3])
@@ -354,6 +463,26 @@ def p_OExp_attr(p):
 def p_OExp_item(p):
     "OExp : Exp '[' Exp ']'"
     p[0] = ("item", p[1], p[3])
+
+
+def p_OExp_method(p):
+    "OExp : Exp DOT id '(' Args ')'"
+    p[0] = ("method", p[1], p[3], p[5])
+
+
+def p_Args_multiple(p):
+    "Args : Args ',' Exp"
+    p[0] = p[1] + [p[3]]
+
+
+def p_Args_single(p):
+    "Args : Exp"
+    p[0] = [p[1]]
+
+
+def p_Args_empty(p):
+    "Args : "
+    p[0] = []
 
 
 # Error rule for syntax errors
@@ -375,24 +504,7 @@ def main(argv):
             break
         if not s:
             continue
-        result = parser.parse(s)
-
-        class MyClass:
-            x = 5
-
-        p1 = MyClass()
-
-        d = {
-            "a": [2, 1, 3],
-            "b": "abc",
-            "c": {"foo": 42, "bar": 73},
-            "d": 42,
-            "e": p1,
-        }
-
-        print("dict:", d)
-        print("ast:", result)
-        print(run(result, d))
+        print("ast:", parser.parse(s))
 
 
 if __name__ == "__main__":

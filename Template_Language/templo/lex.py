@@ -19,7 +19,7 @@ reserved = {
     "False": "FALSE",
 }
 
-literals = ("|", ".", "(", ")", "[", "]")
+literals = ("|", ".", "(", ")", "[", "]", ",")
 
 tokens = [
     "id",
@@ -83,6 +83,7 @@ def t_code_NOTIN(t):
     r"not\s+in"
     return t
 
+
 # ! maybe integrate into the code and make raw a reserved word
 def t_raw(t):
     r"{%\s*raw\s*%}"
@@ -93,8 +94,9 @@ def t_end_raw(t):
     r"{%\s*endraw\s*%}"
     t.lexer.begin("INITIAL")
 
+
 # ! lookahead/behind might not be the best way to go as it requeries ignoring quotes
-def t_code_str(t):  
+def t_code_str(t):
     r"""
     (
       "(?:\\.|[^"\\])*"     # Double quoted strings
@@ -163,7 +165,7 @@ def t_newline(t):
     t.lexer.lineno += len(t.value)
 
 
-t_code_ignore = " \t"  # ! Deal with " to fix lookahead/behind differently
+t_code_ignore = " \t"
 
 
 def t_ANY_error(t):
