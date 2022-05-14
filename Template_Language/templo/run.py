@@ -88,11 +88,15 @@ OPERATORS = {
     "or": lambda x, y: x or y,
 }
 
+
 def template(template):
     ast = parser.parse(template)
+
     def f(dic):
         return run(ast, dic)
+
     return f
+
 
 def main(argv):
     import readline
@@ -111,7 +115,7 @@ def main(argv):
 
             def f(self, i, j, k):
                 return i * j - k + self.x
-            
+
             def g(self):
                 return 9
 

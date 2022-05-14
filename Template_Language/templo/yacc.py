@@ -321,9 +321,9 @@ def p_Exp_Literal(p):
 
 def p_Exp_types(p):
     """Exp : AExp
-       Exp : RExp
-       Exp : LExp
-       Exp : OExp"""
+    Exp : RExp
+    Exp : LExp
+    Exp : OExp"""
     p[0] = p[1]
 
 
@@ -368,7 +368,7 @@ def p_List_single(p):
 
 
 def p_List_empty(p):
-    "List : "
+    "List :"
     p[0] = []
 
 
@@ -394,12 +394,12 @@ def p_Bool_FALSE(p):
 
 def p_AExp_bin(p):
     """AExp : Exp ADD Exp
-            | Exp SUB Exp
-            | Exp MUL Exp
-            | Exp DIV Exp
-            | Exp FDIV Exp
-            | Exp RMD Exp
-            | Exp POW Exp"""
+    | Exp SUB Exp
+    | Exp MUL Exp
+    | Exp DIV Exp
+    | Exp FDIV Exp
+    | Exp RMD Exp
+    | Exp POW Exp"""
     p[0] = (p[2], p[1], p[3])
 
 
@@ -415,13 +415,13 @@ def p_AExp_UPLUS(p):
 
 def p_RExp_bin(p):
     """RExp : Exp EQ Exp
-            | Exp NE Exp
-            | Exp GT Exp
-            | Exp GE Exp
-            | Exp LT Exp
-            | Exp LE Exp
-            | Exp IS id
-            | Exp IN Exp"""
+    | Exp NE Exp
+    | Exp GT Exp
+    | Exp GE Exp
+    | Exp LT Exp
+    | Exp LE Exp
+    | Exp IS id
+    | Exp IN Exp"""
     p[0] = (p[2], p[1], p[3])
 
 
@@ -481,7 +481,7 @@ def p_Args_single(p):
 
 
 def p_Args_empty(p):
-    "Args : "
+    "Args :"
     p[0] = []
 
 
