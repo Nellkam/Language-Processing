@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup (
     name='templo',
-    version='0.0.8',
+    version='0.0.9',
     description='Generic template language.',
     py_modules=["templo"],
     package_dir={'': 'src'},

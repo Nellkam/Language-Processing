@@ -26,7 +26,7 @@ rfc3986==2.0.0
 rich==12.4.1
 SecretStorage==3.3.2
 six==1.16.0
--e git+ssh://git@github.com/Nellkam/Language-Processing.git@a849182c31e6c0c94aae8c3b102e0aaf9dfb36e7#egg=templo&subdirectory=Template_Language
+-e git+ssh://git@github.com/Nellkam/Language-Processing.git@5b7415a3b784e383619c301a9b588806eaa09bf5#egg=templo&subdirectory=Template_Language
 tomli==2.0.1
 twine==4.0.0
 urllib3==1.26.9
