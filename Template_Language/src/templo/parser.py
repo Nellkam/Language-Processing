@@ -177,11 +177,6 @@ def p_Literal_List(p):
     p[0] = ("list", p[2])
 
 
-# def p_Literal_Tuple(p):
-#     "Literal : '(' List ')'"
-#     p[0] = ("tuple", p[2])
-
-
 def p_List_multiple(p):
     "List : List ',' Exp"
     p[0] = p[1] + [p[3]]
