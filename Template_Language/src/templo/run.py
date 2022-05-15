@@ -5,7 +5,7 @@ import sys
 import typing as t
 import yaml
 from yaml import Loader
-from templo.yacc import parser
+from templo.parser import parser
 
 
 def template(tmpl, dic=None):

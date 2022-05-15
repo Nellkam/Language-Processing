@@ -1,96 +1,6 @@
-"""
-Template : Elems
-
-Elems : Elems Elem
-      |
-
-Elem : text
-     | Code
-
-Code : Expression
-     | Statement
-
-Expression : OE Exp CE
-
-Statement : If
-          | For
-          | Repeat
-
-If : OS IF Exp CS Elems OS ENDIF CS
-   | OS IF Exp CS Elems OS ELSE CS Elems OS ENDIF CS
-   | OS IF Exp CS Elems Elifs OS ENDIF CS
-   | OS IF Exp CS Elems Elifs OS ELSE CS Elems OS ENDIF CS
-
-Elifs : Elifs Elif
-      | Elif
-
-Elif : OS ELIF Exp CS Elems
-
-For : OS FOR id IN id CS Elems OS ENDFOR CS
-
-Repeat : OS REPEAT Exp CS Elems OS ENDREPEAT CS
-
-Exp : id
-    | Literal
-    | AExp
-    | RExp
-    | LExp
-    | OExp
-    | '(' Exp ')'
-
-Literal : str
-        | Num
-        | Bool
-        | '[' List ']'
-
-List : List ',' Exp
-     | Exp
-     | 
-
-Num : int
-    | float
-
-Bool : TRUE
-     | FALSE
-
-AExp : Exp ADD Exp
-     | Exp SUB Exp
-     | Exp MUL Exp
-     | Exp DIV Exp
-     | Exp FDIV Exp
-     | Exp RMD Exp
-     | Exp POW Exp
-     | SUB Exp %prec UMINUS
-     | ADD Exp %prec UPLUS
-
-RExp : Exp EQ Exp
-     | Exp NE Exp
-     | Exp GT Exp
-     | Exp GE Exp
-     | Exp LT Exp
-     | Exp LE Exp
-     | Exp IS id
-     | Exp IN Exp
-     | Exp ISNOT id
-     | Exp NOTIN Exp
-
-LExp : NOT Exp
-     | Exp AND Exp
-     | Exp OR Exp
-
-OExp : Exp PIPE id
-     | Exp DOT id
-     | Exp '[' Exp ']'
-     | Exp DOT id '(' Args ')'
-
-Args : Args ',' Exp
-     | Exp
-     | 
-"""
-
 import ply.yacc as yacc
 import sys
-from templo.lex import tokens, literals
+from templo.lexer import tokens, literals
 from inspect import getdoc
 
 
@@ -115,7 +25,7 @@ precedence = (
     ("left", "MUL", "DIV", "FDIV", "RMD"),
     ("left", "POW"),
     ("right", "UMINUS", "UPLUS"),
-    ("left", "CS"),  # ! Is this correct?
+    ("left", "CS"),
 )
 
 

@@ -84,18 +84,16 @@ def t_code_NOTIN(t):
     return t
 
 
-# ! maybe integrate into the code and make raw a reserved word
 def t_raw(t):
     r"{%\s*raw\s*%}"
     t.lexer.begin("raw")
 
 
-def t_end_raw(t):
+def t_raw_end_raw(t):
     r"{%\s*endraw\s*%}"
     t.lexer.begin("INITIAL")
 
 
-# ! lookahead/behind might not be the best way to go as it requeries ignoring quotes
 def t_code_str(t):
     r"""
     (

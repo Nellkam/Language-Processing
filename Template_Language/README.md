@@ -31,14 +31,6 @@ render(d)
 # Generate final text
 # returns 'Hello, simple world!'
 template("Hello,{% if answer == 42 %} simple {% else %} cruel {% endif %}world!", {'answer': 42})
-# returns 'Hello, simple world!'
-template("Hello,{% if answer == 42 %} cruel {% else %} cruel {% endif %}world!", {'answer': 73})
-```
-
-## Developing Templo
-
-To install templo, along with the tools you need to develop and run tests, run the following in your virtualenv:
-
-```bash
-$ pip install -e .[dev]
+# returns 'Hello, cruel world!'
+template("Hello,{% if answer == 42 %} simple {% else %} cruel {% endif %}world!", {'answer': 73})
 ```
