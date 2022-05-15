@@ -1,11 +1,42 @@
 import builtins
+import io
 import operator
 import sys
 import typing as t
 import yaml
 from yaml import Loader
 from templo.yacc import parser
-from templo.tests import TESTS
+
+
+def template(tmpl, dic=None):
+    if isinstance(tmpl, io.TextIOBase):
+        tmpl = tmpl.read()
+    elif type(tmpl) is not str:
+        print("Bad first argument!")
+        return None
+
+    ast = parser.parse(tmpl)
+
+    if dic is None:
+        def _render(d=None):
+            if type(d) is str:
+                d = yaml.load(d, Loader=Loader)
+            elif isinstance(d, io.TextIOBase):
+                d = yaml.load(d.read(), Loader=Loader)
+            elif type(d) is not dict and d is not None:
+                print("Bad first argument!")
+                return None
+            return run(ast, d)
+        return _render
+    else:
+        if type(dic) is str:
+            dic = yaml.load(dic, Loader=Loader)
+        elif isinstance(dic, io.TextIOBase):
+            dic = yaml.load(dic.read(), Loader=Loader)
+        elif type(dic) is not dict:
+            print("Bad second argument!")
+            return None
+        return run(ast, dic)
 
 
 def run(ast, dic):
@@ -15,7 +46,6 @@ def run(ast, dic):
             case "text":
                 out += x[1]
             case "print":
-                # ! Should x[1] be a singleton or should something be restructured?
                 out += str(run([x[1]], dic))
             case "if":
                 for cond, elems in x[1]:
@@ -28,7 +58,7 @@ def run(ast, dic):
                     out += run(x[3], dic)
             case "fordict":
                 print(dic[x[3]])
-                for a, b in dic[x[3]].items(): # ! Easy clashes
+                for a, b in dic[x[3]].items():
                     dic[x[1]] = a
                     dic[x[2]] = b
                     out += run(x[4], dic)
@@ -65,13 +95,10 @@ def run(ast, dic):
             case "filter":
                 out = getattr(builtins, x[2])(run([x[1]], dic))
             case "item":
-                # ! Jinja deals with this differently, might need to use try, except statements
                 out = run([x[1]], dic).__getitem__(run([x[2]], dic))
             case "attr":
-                # ! i don't think this makes comment makes sense anymore -> should var be assigned to this? (if the method returns a value instead of applying to var then it makes a difference) test in jinja
                 out = getattr(run([x[1]], dic), x[2])
             case "method":
-                # ! should var be assigned to this? (if the method returns a value instead of applying to var then it makes a difference) test in jinja
                 args = tuple(map(lambda y: run([y], dic), x[3]))
                 out = getattr(run([x[1]], dic), x[2])(*args)
             case _:
@@ -100,20 +127,19 @@ OPERATORS = {
 }
 
 
-def template(tmpl, dic=None):
-    if type(tmpl) is not str:
-        tmpl = tmpl.read()
-
-    ast = parser.parse(tmpl)
-
-    if dic is None:
-        return lambda d=None: run(ast, d)
-    else:
-        if type(dic) is str:
-            dic = yaml.load(dic, Loader=Loader)
-        elif type(dic) is not dict:
-            dic = yaml.load(dic.read(), Loader=Loader)
-        return run(ast, dic)
+TESTS = {
+    "odd": lambda value: value % 2 == 1,
+    "even": lambda value: value % 2 == 0,
+    "none": lambda value: value is None,
+    "boolean": lambda value: value is True or value is False,
+    "false": lambda value: value is False,
+    "true": lambda value: value is True,
+    "integer": lambda value: isinstance(value, int) and value is not True and value is not False,
+    "float": lambda value: isinstance(value, float),
+    "lower": lambda value: str(value).islower(),
+    "upper": lambda value: str(value).isupper(),
+    "string": lambda value: isinstance(value, str),
+}
 
 
 def main(argv):
@@ -127,29 +153,8 @@ def main(argv):
         if not s:
             continue
         result = parser.parse(s)
-
-        class MyClass:
-            x = 5
-
-            def f(self, i, j, k):
-                return i * j - k + self.x
-
-            def g(self):
-                return 9
-
-        p1 = MyClass()
-
-        d = {
-            "a": [2, 1, 3],
-            "b": "Diana",
-            "c": {"foo": 42, "bar": 73},
-            "d": 42,
-            "e": p1,
-        }
-
-        print("dict:", d)
         print("ast:", result)
-        print(run(result, d))
+        print(run(result, None))
 
 
 if __name__ == "__main__":
