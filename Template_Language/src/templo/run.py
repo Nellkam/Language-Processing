@@ -57,7 +57,6 @@ def run(ast, dic):
                     dic[x[1]] = a
                     out += run(x[3], dic)
             case "fordict":
-                print(dic[x[3]])
                 for a, b in dic[x[3]].items():
                     dic[x[1]] = a
                     dic[x[2]] = b
