@@ -10,7 +10,9 @@ from templo.parser import parser
 
 def template(tmpl, dic=None):
     if isinstance(tmpl, io.TextIOBase):
+        tp = tmpl
         tmpl = tmpl.read()
+        tp.seek(0)
     elif type(tmpl) is not str:
         print("Bad first argument!")
         return None
@@ -22,7 +24,9 @@ def template(tmpl, dic=None):
             if type(d) is str:
                 d = yaml.load(d, Loader=Loader)
             elif isinstance(d, io.TextIOBase):
+                dp = d
                 d = yaml.load(d.read(), Loader=Loader)
+                dp.seek(0)
             elif type(d) is not dict and d is not None:
                 print("Bad first argument!")
                 return None

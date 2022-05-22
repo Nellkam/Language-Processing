@@ -1,8 +1,7 @@
 import ply.yacc as yacc
 import sys
 from templo.lexer import tokens, literals
-from inspect import getdoc
-
+from templo.parser_error import *
 
 precedence = (
     ("left", "OR"),
@@ -307,24 +306,27 @@ def p_Args_empty(p):
 
 # Error rule for syntax errors
 def p_error(p):
-    print("Syntax error in input!", p)
+    pass
 
 
 # Build the parser
 parser = yacc.yacc()
-
+parser.success = True
 
 def main(argv):
     import readline
 
     while True:
+        # ? should lexer and parser.success be reset ?
         try:
             s = input("template > ")
         except EOFError:
             break
         if not s:
             continue
-        print("ast:", parser.parse(s))
+        ast = parser.parse(s)
+        if parser.success:
+            print("ast:", ast)
 
 
 if __name__ == "__main__":
