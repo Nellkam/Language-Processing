@@ -156,8 +156,9 @@ def main(argv):
         if not s:
             continue
         result = parser.parse(s)
-        print("ast:", result)
-        print(run(result, None))
+        if parser.success:
+            print("ast:", result)
+            print(run(result, None))
 
 
 if __name__ == "__main__":

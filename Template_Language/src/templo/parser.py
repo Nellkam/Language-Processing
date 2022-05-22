@@ -306,18 +306,20 @@ def p_Args_empty(p):
 
 # Error rule for syntax errors
 def p_error(p):
-    pass
+    print(f"Error at line {p.lineno}:")
+    print("\tToken:", p.value)
+    print("\tType:", p.type)
 
 
 # Build the parser
-parser = yacc.yacc()
+parser = yacc.yacc(start="Template")
 parser.success = True
 
 def main(argv):
     import readline
 
     while True:
-        # ? should lexer and parser.success be reset ?
+        parser.success = True
         try:
             s = input("template > ")
         except EOFError:
